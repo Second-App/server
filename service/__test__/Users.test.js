@@ -520,7 +520,7 @@ describe('testing PUT by id /users/:id', () => {
 /* ------------------------DELETE users data-------------------------------- */
 
 describe("DELETE user's data", () => {
-  describe('DELED SUCCESS CASE', () => {
+  describe('DELETE SUCCESS CASE', () => {
     it('It should return with status code 200 and return a message', (done) => {
       request(app)
         .delete(`/users/${UserId}`)
@@ -536,7 +536,7 @@ describe("DELETE user's data", () => {
     });
   });
 
-  describe('DELED FAILED CASE: access token wrong/failed', () => {
+  describe('DELETE FAILED CASE: access token wrong/failed', () => {
     it('It should return with status code 404 and return a message', (done) => {
       request(app)
         .delete(`/users/${UserId}`)
@@ -549,7 +549,7 @@ describe("DELETE user's data", () => {
     });
   });
 
-  describe('DELED FAILED CASE: access token wrong/failed', () => {
+  describe('DELETE FAILED CASE: access token wrong/failed', () => {
     it('It should return with status code 401 and return a message', (done) => {
       request(app)
         .delete(`/users/${UserId}`)
