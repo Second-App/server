@@ -1,6 +1,8 @@
 const request = require('supertest');
 const app = require('../app.js');
 
+// SEEDERS jangan lupa assign user id ke variabel UserId, cek line 293
+
 describe('testing /login', () => {
   // email dan password benar
   describe('correct email and password', () => {
@@ -284,4 +286,280 @@ describe('testing /register', () => {
 });
 
 /* ----------------------------------------------------------------- */
+/* ------------------------GET users data-------------------------------- */
+
+describe('testing sers GET by id /users/:id', () => {
+  // ID terdaftar di database
+  describe('User ID registered in the database', () => {
+    it("It should return with status code 200 and return user data", (done) => {
+      request(app)
+      .get(`/users/${UserId}`)
+      .send()
+      .set('access_token', access_token)
+      .end((err, res) => {
+        if (err) done(err);
+
+        expect(res.statusCode).toEqual(200)
+        expect(res.body).toHaveProperty('data', expect.any(Object))
+        expect(res.body.data).toHaveProperty('id', expect.any(Number))
+        expect(res.body.data).toHaveProperty('name', expect.any(String))
+        expect(res.body.data).toHaveProperty('email', expect.any(String))
+        expect(res.body.data).toHaveProperty('image_url', expect.any(String))
+        expect(res.body.data).toHaveProperty('balance', expect.any(Number))
+        done()
+      })
+    })
+  })
+})
+
 /* ----------------------------------------------------------------- */
+/* ------------------------EDIT users data-------------------------------- */
+
+describe('testing PUT by id /users/:id', () => {
+  // ID terdaftar di database
+  describe('PUT SUCCESS CASE', () => {
+    it("It should return with status code 200 and return message", (done) => {
+      const body = {
+        name: 'fullname user',
+        email: 'user2@mail.com',
+        password: 'User1234',
+      }
+
+      request(app)
+      .put(`/users/${UserId}`)
+      .send(body)
+      .set('access_token', access_token)
+      .end((err, res) => {
+        if (err) done(err);
+
+        expect(res.statusCode).toEqual(200)
+        expect(typeof res.body).toEqual('object')
+        expect(res.body).toHaveProperty('msg', 'data updated')
+        done()
+      })
+    })
+  })
+
+  describe('PUT FAILED CASE: access token not sent', () => {
+    it("It should return with status code 401", (done) => {
+      const body = {
+        name: 'fullname user',
+        email: 'user2@mail.com',
+        password: 'User1234',
+      }
+
+      request(app)
+      .put(`/users/${UserId}`)
+      .send(body)
+      .end((err, res) => {
+        if (err) done(err);
+
+        expect(res.statusCode).toBe(401)
+        done()
+      })
+    })
+  })
+
+  describe('PUT FAILED CASE: access token is wrong', () => {
+    it("It should return with status code 404", (done) => {
+      const body = {
+        name: 'fullname user',
+        email: 'user2@mail.com',
+        password: 'User1234',
+      }
+
+      request(app)
+      .put(`/users/${UserId}`)
+      .send(body)
+      .set('access_token', 'bukantokenadmin')
+      .end((err, res) => {
+        if (err) done(err)
+        expect(res.statusCode).toBe(404)
+        done()
+      })
+    })
+  })
+
+  describe('PUT FAILED CASE: empty name field', () => {
+    it("It should return with status code 404", (done) => {
+      const body = {
+        name: '',
+        email: 'user2@mail.com',
+        password: 'User1234',
+      }
+
+      request(app)
+      .put(`/users/${UserId}`)
+      .send(body)
+      .set('access_token', access_token)
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res.status).toEqual(400);
+        expect(typeof res.body).toEqual('object');
+
+        expect(res.body).toHaveProperty('msg');
+
+        expect(typeof res.body.msg).toEqual('string');
+        expect(res.body.msg).toEqual('Input name should not be empty');
+
+        done();
+      })
+    })
+  })
+
+  describe('PUT FAILED CASE: empty email field', () => {
+    it("It should return with status code 404", (done) => {
+      const body = {
+        name: 'fullname user',
+        email: '',
+        password: 'User1234',
+      }
+
+      request(app)
+      .put(`/users/${UserId}`)
+      .send(body)
+      .set('access_token', access_token)
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res.status).toEqual(400);
+        expect(typeof res.body).toEqual('object');
+
+        expect(res.body).toHaveProperty('msg');
+
+        expect(typeof res.body.msg).toEqual('string');
+        expect(res.body.msg).toEqual('Input email should not be empty');
+
+        done();
+      })
+    })
+  })
+
+  describe('PUT FAILED CASE: invalid email format', () => {
+    it("It should return with status code 404", (done) => {
+      const body = {
+        name: 'fullname user',
+        email: 'usermail.com',
+        password: 'User1234',
+      }
+
+      request(app)
+      .put(`/users/${UserId}`)
+      .send(body)
+      .set('access_token', access_token)
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res.status).toEqual(400);
+        expect(typeof res.body).toEqual('object');
+
+        expect(res.body).toHaveProperty('msg');
+
+        expect(typeof res.body.msg).toEqual('string');
+        expect(res.body.msg).toEqual('Invalid email format');
+
+        done();
+      })
+    })
+  })
+
+  describe('PUT FAILED CASE: empty password field', () => {
+    it("It should return with status code 404", (done) => {
+      const body = {
+        name: 'fullname user',
+        email: 'user2@mail.com',
+        password: '',
+      }
+
+      request(app)
+      .put(`/users/${UserId}`)
+      .send(body)
+      .set('access_token', access_token)
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res.status).toEqual(400);
+        expect(typeof res.body).toEqual('object');
+
+        expect(res.body).toHaveProperty('msg');
+
+        expect(typeof res.body.msg).toEqual('string');
+        expect(res.body.msg).toEqual('Input password should not be empty');
+
+        done();
+      })
+    })
+  })
+
+  describe('PUT FAILED CASE: invalid password format', () => {
+    it("It should return with status code 404", (done) => {
+      const body = {
+        name: 'fullname user',
+        email: 'user2@mail.com',
+        password: '1as3',
+      }
+
+      request(app)
+      .put(`/users/${UserId}`)
+      .send(body)
+      .set('access_token', access_token)
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res.status).toEqual(400);
+        expect(typeof res.body).toEqual('object');
+
+        expect(res.body).toHaveProperty('msg');
+
+        expect(typeof res.body.msg).toEqual('string');
+        expect(res.body.msg).toEqual('Invalid password ');
+
+        done();
+      })
+    })
+  })
+})
+
+/* ----------------------------------------------------------------- */
+/* ------------------------DELETE users data-------------------------------- */
+
+describe("DELETE user's data", () => {
+  
+  describe("DELED SUCCESS CASE", () => {
+    it("It should return with status code 200 and return a message", (done) => {
+      request(app)
+      .delete(`/users/${UserId}`)
+      .set('access_token', access_token)
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res.statusCode).toEqual(200)
+        expect(typeof res.body).toEqual('object')
+        expect(re.body).toHaveProperty('message')
+        expect(res.body.message).toEqual('Account deleted')
+        done()
+      })
+    })
+  })
+
+  describe("DELED FAILED CASE: access token wrong/failed", () => {
+    it("It should return with status code 404 and return a message", (done) => {
+      request(app)
+      .delete(`/users/${UserId}`)
+      .set('access_token', 'bukantokennya')
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res.statusCode).toEqual(404)
+        done()
+      })
+    })
+  })
+
+  describe("DELED FAILED CASE: access token wrong/failed", () => {
+    it("It should return with status code 401 and return a message", (done) => {
+      request(app)
+      .delete(`/users/${UserId}`)
+      .set()
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res.statusCode).toEqual(401)
+        done()
+      })
+    })
+  })
+})
