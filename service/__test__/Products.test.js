@@ -61,6 +61,16 @@ describe('testing /products', () => {
           expect(typeof res.body.location).toEqual('string');
           expect(typeof res.body.sold).toEqual('boolean');
           expect(typeof res.body.available).toEqual('boolean');
+
+          expect(res.body.TypeId).toEqual(body.TypeId);
+          expect(res.body.CategoryId).toEqual(body.CategoryId);
+          expect(res.body.name).toEqual(body.name);
+          expect(res.body.price).toEqual(body.price);
+          expect(res.body.description).toEqual(body.description);
+          expect(res.body.imageUrl).toEqual(body.imageUrl);
+          expect(res.body.location).toEqual(body.location);
+          expect(res.body.sold).toEqual(false);
+          expect(res.body.available).toEqual(true);
         });
     });
   });
