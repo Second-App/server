@@ -537,7 +537,7 @@ describe("DELETE user's data", () => {
   });
 
   describe('DELETE FAILED CASE: access token wrong/failed', () => {
-    it('It should return with status code 404 and return a message', (done) => {
+    it('It should return with status code 404', (done) => {
       request(app)
         .delete(`/users/${UserId}`)
         .set('access_token', 'bukantokennya')
@@ -550,7 +550,7 @@ describe("DELETE user's data", () => {
   });
 
   describe('DELETE FAILED CASE: access token wrong/failed', () => {
-    it('It should return with status code 401 and return a message', (done) => {
+    it('It should return with status code 401', (done) => {
       request(app)
         .delete(`/users/${UserId}`)
         .set()
