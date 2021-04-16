@@ -4,7 +4,7 @@ const { generateToken } = require('../helpers/jwt.js');
 
 describe('testing /products', () => {
   let access_token;
-  let id;
+  let ProductId;
 
   beforeAll(() => {
     access_token = generateToken({

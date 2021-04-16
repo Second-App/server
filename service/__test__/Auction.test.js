@@ -1,10 +1,10 @@
 const request = require('supertest');
 const app = require('../app.js');
 
-describe('GET carts', () => {
+describe('GET auctions', () => {
   it("It should returned with status code 200", (done) => {
     request(app)
-    .get('/carts/')
+    .get('/auctions/')
     .send()
     .set('access_token', access_token)
     .end((err, res) => {
@@ -13,6 +13,8 @@ describe('GET carts', () => {
       expect(typeof res.body).toEqual('object')
       expect(res.body).toHaveProperty('UserId', expect.any(Number))
       expect(res.body).toHaveProperty('ProductId', expect.any(Number))
+      expect(res.body).toHaveProperty('startPrice', expect.any(Number))
+      expect(res.body).toHaveProperty('multiplier', expect.any(Number))
       expect(res.body).toHaveProperty('Products', expect.any(Object))
       expect(Array.isArray(res.body.Products)).toEqual(
         expect.arrayContaining([expect.any(Object)])
@@ -24,16 +26,18 @@ describe('GET carts', () => {
   })
 })
 
-describe('POST new items to cart', () => {
+describe('POST new items to auction', () => {
   describe('POST SUCCESS CASE', () => {
     it('It should return with status code 201 and return new data', (done) => {
       const body = {
-        UserId: Number,
-        ProductId: Number,
+        UserId: 1,
+        ProductId: 1,
+        startPrice: 100000,
+        multiplier: 50000
       };
 
       request(app)
-        .post('/carts')
+        .post('/auctions')
         .send(body)
         .set('access_token', access_token)
         .end((err, res) => {
@@ -46,6 +50,10 @@ describe('POST new items to cart', () => {
           expect(typeof res.body.id).toEqual('number');
           expect(res.body).toHaveProperty('ProductId', expect.any(Number));
           expect(typeof res.body.id).toEqual('number');
+          expect(res.body).toHaveProperty('startPrice', expect.any(Number));
+          expect(typeof res.body.id).toEqual('number');
+          expect(res.body).toHaveProperty('multiplier', expect.any(Number));
+          expect(typeof res.body.id).toEqual('number');
           expect(res.body).toHaveProperty('Product', expect.any(Array));
           done();
         });
@@ -53,36 +61,36 @@ describe('POST new items to cart', () => {
   });
 });
 
-/*************** PATCH item in Cart *****************/
+/*************** PATCH item in auction *****************/
 /*****************************************************/
 
-describe('PATCH cart by increasing/decreasing products value', () => {
-  describe('PATCH SUCCESS: add to cart', () => {
+describe('PATCH auction by increasing/decreasing multiplier value', () => {
+  describe('PATCH SUCCESS: multiplier increased', () => {
     const body = {
-      ProductId: 1,
+      currentBid: 200000
     };
     it('Should return with status code 200', (done) => {
       request(app)
-        .patch(`/carts/${CartId}`)
+        .patch(`/auctions/${auctionId}`)
         .send(body)
         .set('access_token', access_token)
         .end((err, res) => {
           if (err) done(err);
           expect(res.statusCode).toEqual(200);
           expect(typeof res.body).toEqual('object');
-          expect(res.body).toHaveProperty('message', 'Cart updated');
+          expect(res.body).toHaveProperty('message', 'bid multiplier increased');
           done();
         });
     });
   });
 
-  describe('PATCH FAILED: add to cart where products is null', () => {
+  describe('PATCH FAILED: add to auction where products is null', () => {
     const body = {
-      ProductId: null,
+      currentBid: 152000
     };
     it('Should return with status code 400', (done) => {
       request(app)
-        .patch(`/carts/${CartId}`)
+        .patch(`/auctions/${auctionId}`)
         .send(body)
         .set('access_token', access_token)
         .end((err, res) => {
@@ -91,7 +99,7 @@ describe('PATCH cart by increasing/decreasing products value', () => {
           expect(typeof res.body).toEqual('object');
           expect(res.body).toHaveProperty(
             'message',
-            'Product failed to add to cart'
+            'Bid must be multipled of multiplier value'
           );
           done();
         });
@@ -100,21 +108,21 @@ describe('PATCH cart by increasing/decreasing products value', () => {
 
 });
 
-/*************** DELETE Cart *****************/
+/*************** DELETE auction *****************/
 /*****************************************************/
-describe('DELETE SUCCESS: delete cart', () => {
+describe('DELETE SUCCESS: delete auction', () => {
   const body = {
     ProductId: 1,
   };
   it('Should return with status code 200', (done) => {
     request(app)
-      .delete(`/carts/${CartId}`)
+      .delete(`/auctions/${auctionId}`)
       .set('access_token', access_token)
       .end((err, res) => {
         if (err) done(err);
         expect(res.statusCode).toEqual(200);
         expect(typeof res.body).toEqual('object');
-        expect(res.body).toHaveProperty('message', 'Cart deleted');
+        expect(res.body).toHaveProperty('message', 'auction deleted');
         done();
       });
   });
