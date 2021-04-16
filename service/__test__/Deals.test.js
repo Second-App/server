@@ -4,7 +4,7 @@ const app = require('../app.js');
 describe('GET carts', () => {
   it("It should returned with status code 200", (done) => {
     request(app)
-    .get('/carts/')
+    .get('/deals/')
     .send()
     .set('access_token', access_token)
     .end((err, res) => {
@@ -24,7 +24,7 @@ describe('GET carts', () => {
   })
 })
 
-describe('POST new items to cart', () => {
+describe('POST new items to deals', () => {
   describe('POST SUCCESS CASE', () => {
     it('It should return with status code 201 and return new data', (done) => {
       const body = {
@@ -33,7 +33,7 @@ describe('POST new items to cart', () => {
       };
 
       request(app)
-        .post('/carts')
+        .post('/deals/')
         .send(body)
         .set('access_token', access_token)
         .end((err, res) => {
@@ -53,68 +53,19 @@ describe('POST new items to cart', () => {
   });
 });
 
-/*************** PATCH item in Cart *****************/
-/*****************************************************/
-
-describe('PATCH cart by increasing/decreasing products value', () => {
-  describe('PATCH SUCCESS: add to cart', () => {
-    const body = {
-      ProductId: 1,
-    };
-    it('Should return with status code 200', (done) => {
-      request(app)
-        .patch(`/carts/${CartId}`)
-        .send(body)
-        .set('access_token', access_token)
-        .end((err, res) => {
-          if (err) done(err);
-          expect(res.statusCode).toEqual(200);
-          expect(typeof res.body).toEqual('object');
-          expect(res.body).toHaveProperty('message', 'Cart updated');
-          done();
-        });
-    });
-  });
-
-  describe('PATCH FAILED: add to cart where products is null', () => {
-    const body = {
-      ProductId: null,
-    };
-    it('Should return with status code 400', (done) => {
-      request(app)
-        .patch(`/carts/${CartId}`)
-        .send(body)
-        .set('access_token', access_token)
-        .end((err, res) => {
-          if (err) done(err);
-          expect(res.statusCode).toEqual(400);
-          expect(typeof res.body).toEqual('object');
-          expect(res.body).toHaveProperty(
-            'message',
-            'Product failed to add to cart'
-          );
-          done();
-        });
-    });
-  });
-
-});
-
-/*************** DELETE Cart *****************/
-/*****************************************************/
 describe('DELETE SUCCESS: delete cart', () => {
   const body = {
     ProductId: 1,
   };
   it('Should return with status code 200', (done) => {
     request(app)
-      .delete(`/carts/${CartId}`)
+      .delete(`/deals/${DealId}`)
       .set('access_token', access_token)
       .end((err, res) => {
         if (err) done(err);
         expect(res.statusCode).toEqual(200);
         expect(typeof res.body).toEqual('object');
-        expect(res.body).toHaveProperty('message', 'Cart deleted');
+        expect(res.body).toHaveProperty('message', 'Deal deleted');
         done();
       });
   });
