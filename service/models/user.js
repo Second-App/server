@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         through: 'Deals',
         foreignKey: 'UserId',
       });
+      User.hasMany(models.Product);
       User.hasMany(models.Chat, { foreignKey: 'SenderId' });
       User.hasMany(models.Chat, { foreignKey: 'ReceiverId' });
     }

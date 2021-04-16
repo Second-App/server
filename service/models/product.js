@@ -1,5 +1,5 @@
-"use strict";
-const { Model } = require("sequelize");
+'use strict';
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Product extends Model {
     /**
@@ -8,9 +8,18 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Product.belongsToMany(models.User, { through: "Carts", foreignKey: "ProductId" });
-      Product.belongsToMany(models.User, { through: "Whistlists", foreignKey: "ProductId" });
-      Product.belongsToMany(models.User, { through: "Deals", foreignKey: "ProductId" });
+      Product.belongsToMany(models.User, {
+        through: 'Carts',
+        foreignKey: 'ProductId',
+      });
+      Product.belongsToMany(models.User, {
+        through: 'Whistlists',
+        foreignKey: 'ProductId',
+      });
+      Product.belongsToMany(models.User, {
+        through: 'Deals',
+        foreignKey: 'ProductId',
+      });
       Product.belongsTo(models.User);
       Product.belongsTo(models.Category);
       Product.belongsTo(models.Type);
@@ -18,20 +27,107 @@ module.exports = (sequelize, DataTypes) => {
   }
   Product.init(
     {
-      UserId: DataTypes.INTEGER,
-      TypeId: DataTypes.INTEGER,
-      CategoryId: DataTypes.INTEGER,
-      name: DataTypes.STRING,
-      price: DataTypes.INTEGER,
+      UserId: {
+        type: DataTypes.INTEGER,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'UserId should not be empty',
+          },
+          isInt: {
+            args: true,
+            msg: 'UserId should be a number integer value',
+          },
+        },
+      },
+      TypeId: {
+        type: DataTypes.INTEGER,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'TypeId should not be empty',
+          },
+          isInt: {
+            args: true,
+            msg: 'TypeId should be a number integer value',
+          },
+        },
+      },
+      CategoryId: {
+        type: DataTypes.INTEGER,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'CategoryId should not be empty',
+          },
+          isInt: {
+            args: true,
+            msg: 'CategoryId should be a number integer value',
+          },
+        },
+      },
+      name: {
+        type: DataTypes.STRING,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'Input name should not be empty',
+          },
+        },
+      },
+      price: {
+        type: DataTypes.INTEGER,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'Input price should not be empty',
+          },
+          isInt: {
+            args: true,
+            msg: 'Input price should be a number integer value',
+          },
+          notNegative(value) {
+            if (value < 0) {
+              throw new Error('Input price should not be a negative value');
+            }
+          },
+        },
+      },
       description: DataTypes.STRING,
-      imageUrl: DataTypes.STRING,
-      location: DataTypes.STRING,
+      imageUrl: {
+        type: DataTypes.STRING,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'Input imageUrl should not be empty',
+          },
+          isUrl: {
+            args: true,
+            msg: 'Invalid input Url',
+          },
+        },
+      },
+      location: {
+        type: DataTypes.STRING,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'Input location should not be empty',
+          },
+        },
+      },
       sold: DataTypes.BOOLEAN,
       available: DataTypes.BOOLEAN,
     },
     {
+      hooks: {
+        beforeCreate: (Product) => {
+          Product.sold = false;
+          Product.available = true;
+        },
+      },
       sequelize,
-      modelName: "Product",
+      modelName: 'Product',
     }
   );
   return Product;
