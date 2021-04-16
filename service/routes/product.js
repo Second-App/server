@@ -1,11 +1,10 @@
-const router = require('express').Router()
+const router = require('express').Router();
 
-router.get('/:id') 
-router.post('/register')
-router.post('/login')
+router.get('/:id');
+router.post('/');
 
-router.put('/edit/:id')
-router.patch('/patch/:id')
-router.delete('/delete/:id')
+router.put('/:id');
+router.patch('/:id');
+router.delete('/:id');
 
-module.exports = router
+module.exports = router;
