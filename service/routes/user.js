@@ -1,8 +1,9 @@
 const router = require('express').Router();
 
-router.get('/:id');
 router.post('/register');
 router.post('/login');
+
+router.get('/:id');
 router.put('/:id');
 router.patch('/:id');
 router.delete('/:id');
