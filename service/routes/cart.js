@@ -3,10 +3,13 @@ const CartController = require('../controllers/CartController.js');
 const { authenticate } = require('../middlewares/authenticate.js');
 const { authorizeCart } = require('../middlewares/authorize.js');
 
-router.post('/');
-router.get('/');
+router.use(authenticate);
 
-router.patch('/:id');
-router.delete('/:id');
+router.post('/', CartController.createCard);
+router.get('/', CartController.getCart);
+
+router.use('/:id', authorizeCart);
+
+router.delete('/:id', CartController.deleteCart);
 
 module.exports = router;
