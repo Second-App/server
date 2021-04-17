@@ -1,5 +1,5 @@
-'use strict';
-const { Model } = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Product extends Model {
     /**
@@ -9,20 +9,20 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Product.belongsToMany(models.User, {
-        through: 'Carts',
-        foreignKey: 'ProductId',
+        through: "Carts",
+        foreignKey: "ProductId",
       });
       Product.belongsToMany(models.User, {
-        through: 'Whistlists',
-        foreignKey: 'ProductId',
+        through: "Whistlists",
+        foreignKey: "ProductId",
       });
       Product.belongsToMany(models.User, {
-        through: 'Deals',
-        foreignKey: 'ProductId',
+        through: "Deals",
+        foreignKey: "ProductId",
       });
       Product.belongsToMany(models.User, {
-        through: 'Auctions',
-        foreignKey: 'ProductId',
+        through: "Auctions",
+        foreignKey: "ProductId",
       });
       Product.belongsTo(models.User);
       Product.belongsTo(models.Category);
@@ -36,11 +36,11 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           notEmpty: {
             args: true,
-            msg: 'UserId should not be empty',
+            msg: "UserId should not be empty",
           },
           isInt: {
             args: true,
-            msg: 'UserId should be a number integer value',
+            msg: "UserId should be a number integer value",
           },
         },
       },
@@ -49,11 +49,11 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           notEmpty: {
             args: true,
-            msg: 'TypeId should not be empty',
+            msg: "TypeId should not be empty",
           },
           isInt: {
             args: true,
-            msg: 'TypeId should be a number integer value',
+            msg: "TypeId should be a number integer value",
           },
         },
       },
@@ -62,11 +62,11 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           notEmpty: {
             args: true,
-            msg: 'CategoryId should not be empty',
+            msg: "CategoryId should not be empty",
           },
           isInt: {
             args: true,
-            msg: 'CategoryId should be a number integer value',
+            msg: "CategoryId should be a number integer value",
           },
         },
       },
@@ -75,7 +75,7 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           notEmpty: {
             args: true,
-            msg: 'Input name should not be empty',
+            msg: "Input name should not be empty",
           },
         },
       },
@@ -84,15 +84,15 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           notEmpty: {
             args: true,
-            msg: 'Input price should not be empty',
+            msg: "Input price should not be empty",
           },
           isInt: {
             args: true,
-            msg: 'Input price should be a number integer value',
+            msg: "Input price should be a number integer value",
           },
           notNegative(value) {
             if (value < 0) {
-              throw new Error('Input price should not be a negative value');
+              throw new Error("Input price should not be a negative value");
             }
           },
         },
@@ -103,11 +103,11 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           notEmpty: {
             args: true,
-            msg: 'Input imageUrl should not be empty',
+            msg: "Input imageUrl should not be empty",
           },
           isUrl: {
             args: true,
-            msg: 'Invalid input Url',
+            msg: "Invalid input Url",
           },
         },
       },
@@ -116,12 +116,13 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           notEmpty: {
             args: true,
-            msg: 'Input location should not be empty',
+            msg: "Input location should not be empty",
           },
         },
       },
       sold: DataTypes.BOOLEAN,
       available: DataTypes.BOOLEAN,
+      condition: DataTypes.INTEGER,
     },
     {
       hooks: {
@@ -131,7 +132,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       sequelize,
-      modelName: 'Product',
+      modelName: "Product",
     }
   );
   return Product;
