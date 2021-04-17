@@ -1,8 +1,17 @@
-const router = require('express').Router()
+const router = require('express').Router();
+const ChatController = require('../controllers/ChatController.js');
+const { authenticate } = require('../middlewares/authenticate.js');
+const { authorizeChat } = require('../middlewares/authorize.js');
 
-router.post('/')
-router.get('/') 
+router.use(authenticate);
 
-router.delete('/:id')
+router.post('/', ChatController.createChat);
 
-module.exports = router
+router.get('/send', ChatController.getChatsSend);
+router.get('/receive', ChatController.getChatReceive);
+
+router.use('/:id', authorizeChat);
+
+router.delete('/:id', ChatController.deleteChat);
+
+module.exports = router;
