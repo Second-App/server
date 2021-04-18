@@ -39,7 +39,7 @@ module.exports = {
         type: Sequelize.STRING,
       },
       price: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.BIGINT,
       },
       description: {
         type: Sequelize.STRING,
