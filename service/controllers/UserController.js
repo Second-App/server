@@ -5,12 +5,14 @@ const { generateToken } = require('../helpers/jwt.js');
 class UserController {
   static async register(req, res, next) {
     try {
-      const { name, email, password } = req.body;
+      const { name, email, password,ktpURL, address } = req.body;
 
       const newUser = {
         name,
         email,
         password,
+        ktpURL,
+        address
       };
 
       const newUserData = await User.create(newUser);
@@ -23,6 +25,8 @@ class UserController {
         email: newUserData.email,
         imageUrl: newUserData.imageUrl,
         balance: newUserData.balance,
+        ktpURL: newUserData.ktpURL,
+        address: newUserData.address
       });
     } catch (err) {
       next(err);
@@ -85,6 +89,8 @@ class UserController {
         email: profileData.email,
         imageUrl: profileData.imageUrl,
         balance: profileData.balance,
+        ktpURL: profileData.ktpURL,
+        address: profileData.address
       });
     } catch (err) {
       next(err);
@@ -99,7 +105,7 @@ class UserController {
       // console.log(profileData)
       if (!profileData) throw err;
 
-      const { name, email, imageUrl } = req.body;
+      const { name, email, imageUrl, ktpURL, address } = req.body;
 
       const updateProfile = {
         id,
@@ -108,6 +114,8 @@ class UserController {
         password: profileData.password,
         imageUrl,
         balance: profileData.balance,
+        ktpURL,
+        address
       };
 
       const updatedProfileData = await User.update(updateProfile, {
