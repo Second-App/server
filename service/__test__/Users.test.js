@@ -530,62 +530,6 @@ describe("USER TEST CASE", () => {
           });
       });
     });
-  
-    // describe('PUT FAILED CASE: empty password field', () => {
-    //   it('It should return with status code 404', (done) => {
-    //     const body = {
-    //       name: 'fullname user',
-    //       email: 'user2@mail.com',
-    //       password: '',
-    //     };
-  
-    //     request(app)
-    //       .put(`/users/${UserId}`)
-    //       .send(body)
-    //       .set('access_token', access_token)
-    //       .end((err, res) => {
-    //         if (err) done(err);
-    //         expect(res.status).toEqual(400);
-    //         expect(typeof res.body).toEqual('object');
-  
-    //         expect(res.body).toHaveProperty('msg');
-    //         expect(Array.isArray(res.body.msg)).toEqual(true)
-    //         expect(res.body.msg).toEqual(
-    //           expect.arrayContaining(['Input password should not be empty'])
-    //         )
-    //         done();
-    //       });
-    //   });
-    // });
-  
-    // describe('PUT FAILED CASE: invalid password format', () => {
-    //   it('It should return with status code 404', (done) => {
-    //     const body = {
-    //       name: 'fullname user',
-    //       email: 'user2@mail.com',
-    //       password: '1as3',
-    //     };
-  
-    //     request(app)
-    //       .put(`/users/${UserId}`)
-    //       .send(body)
-    //       .set('access_token', access_token)
-    //       .end((err, res) => {
-    //         if (err) done(err);
-    //         expect(res.status).toEqual(400);
-    //         expect(typeof res.body).toEqual('object');
-  
-    //         expect(res.body).toHaveProperty('msg');
-  
-    //         expect(Array.isArray(res.body.msg)).toEqual(true)
-    //         expect(res.body.msg).toEqual(
-    //           expect.arrayContaining(['Password must be at least contain a capital letter, a number or symbol, and minimum of 6 characters'])
-    //         )
-  
-    //         done();
-    //       });
-    //   });
-    // });
   });
   
   /* ----------------------------------------------------------------- */
