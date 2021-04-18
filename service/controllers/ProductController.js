@@ -17,7 +17,11 @@ class ProductController {
 
   static async getById(req, res, next) {
     try {
-      const productsData = await Product.findByPk(req.params.id);
+      const { id } = req.params;
+      const productsData = await Product.findOne({
+        where: { id },
+        include: ['Type', 'Category', 'User'],
+      });
 
       if (!productsData) throw err;
 
