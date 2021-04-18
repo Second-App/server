@@ -68,6 +68,8 @@ class UserController {
         email: user.email,
         imageUrl: user.imageUrl,
         balance: user.balance,
+        ktpURL: user.ktpURL,
+        address: user.address,
         access_token: access_token,
       });
     } catch (err) {
