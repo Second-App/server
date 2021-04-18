@@ -80,7 +80,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       price: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BIGINT,
         validate: {
           notEmpty: {
             args: true,
