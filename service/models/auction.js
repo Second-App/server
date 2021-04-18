@@ -21,20 +21,22 @@ module.exports = (sequelize, DataTypes) => {
     startPrice: DataTypes.INTEGER,
     multiplier: DataTypes.INTEGER,
     currentBid: {
-      type: DataTypes.INTEGER,
-      validate: {
-        checkBid(value) {
-          if (value <= (startPrice + multiplier)) {
-            throw new Error(`Bid must be multipled of multiplier value`)
-          }
-        }
-      }
+      type: DataTypes.INTEGER
+      // validate: {
+      //   checkBid(value) {
+      //     console.log(this.startPrice, this.multiplier, value, "<< ini di model")
+      //     if (value <= (this.startPrice + this.multiplier)) {
+      //       throw new Error(`Bid must be multipled of multiplier value`)
+      //     }
+      //   }
+      // }
     }
   }, {
     sequelize,
     modelName: 'Auction',
   });
   Auction.addHook('beforeCreate', (auction, options) => {
+    
     auction.currentBid = auction.multiplier + auction.startPrice
   })
   return Auction;

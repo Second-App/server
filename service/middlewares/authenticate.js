@@ -5,7 +5,6 @@ const authenticate = async (req, res, next) => {
   try {
     const token = req.headers.access_token;
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
-
     const checkId = await User.findByPk(decoded.id);
 
     if (!checkId)
@@ -16,7 +15,7 @@ const authenticate = async (req, res, next) => {
       };
 
     req.decoded = decoded;
-
+    
     next();
   } catch (err) {
     if (!err.msg) {

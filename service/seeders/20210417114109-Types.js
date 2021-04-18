@@ -11,7 +11,7 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
      */
-    await queryInterface.buldInsert(
+    await queryInterface.bulkInsert(
       'Types',
       [
         {

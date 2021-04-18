@@ -96,7 +96,7 @@ class UserController {
       const { id } = req.params;
 
       const profileData = await User.findByPk(id);
-
+      // console.log(profileData)
       if (!profileData) throw err;
 
       const { name, email, imageUrl } = req.body;

@@ -4,12 +4,12 @@ const authorizeProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
     const UserId = req.decoded.id;
-
+    
     const data = await Product.findOne({
       where: { id },
       include: ['User'],
     });
-
+    
     if (!data)
       throw {
         status: 404,

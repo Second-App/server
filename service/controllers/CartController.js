@@ -33,6 +33,7 @@ class CartController {
         msg: 'added to cart',
       });
     } catch (err) {
+      
       next(err);
     }
   }
@@ -47,7 +48,7 @@ class CartController {
       });
 
       if (!cartData) throw err;
-
+      
       res.status(200).json(cartData);
     } catch (err) {
       next(err);
@@ -65,7 +66,7 @@ class CartController {
       if (!deleteCartData) throw err;
 
       res.status(200).json({
-        msg: 'data deleted',
+        msg: 'Cart deleted',
       });
     } catch (err) {
       next(err);
