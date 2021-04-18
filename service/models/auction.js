@@ -30,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
         //   }
         // }
       },
+      currentUserBidId: DataTypes.INTEGER,
     },
     {
       sequelize,
@@ -37,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
   Auction.addHook('beforeCreate', (auction, options) => {
-    auction.currentBid = auction.multiplier + auction.startPrice;
+    auction.currentBid = auction.startPrice;
   });
   return Auction;
 };

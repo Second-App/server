@@ -1,4 +1,4 @@
-const { Category } = require('../models');
+const { Category, Product } = require('../models');
 
 class CategoryController {
   static async getCategory(req, res, next) {
@@ -13,15 +13,18 @@ class CategoryController {
     }
   }
 
-  static async getCategoryById(req, res, next) {
+  static async getProductsByCategoryId(req, res, next) {
     try {
       const { id } = req.params;
 
-      const categoryData = await Category.findByPk(id);
+      const productsData = await Product.findAll({
+        where: { CategoryId: id },
+        include: ['User', 'Type', 'Category'],
+      });
 
-      if (!categoryData) throw err;
+      if (!productsData) throw err;
 
-      res.status(200).json(categoryData);
+      res.status(200).json(productsData);
     } catch (err) {
       next(err);
     }
