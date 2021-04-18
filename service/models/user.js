@@ -1,8 +1,8 @@
-'use strict';
-const { Model } = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  const { hashPass } = require('../helpers/bcrypt.js');
-  const checkPassword = require('../helpers/checkPassword.js');
+  const { hashPass } = require("../helpers/bcrypt.js");
+  const checkPassword = require("../helpers/checkPassword.js");
   class User extends Model {
     /**
      * Helper method for defining associations.
@@ -11,24 +11,24 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       User.belongsToMany(models.Product, {
-        through: 'Carts',
-        foreignKey: 'UserId',
+        through: "Carts",
+        foreignKey: "UserId",
       });
       User.belongsToMany(models.Product, {
-        through: 'Wishlists',
-        foreignKey: 'UserId',
+        through: "Wishlists",
+        foreignKey: "UserId",
       });
       User.belongsToMany(models.Product, {
-        through: 'Deals',
-        foreignKey: 'UserId',
+        through: "Deals",
+        foreignKey: "UserId",
       });
       User.belongsToMany(models.Product, {
-        through: 'Auctions',
-        foreignKey: 'UserId',
+        through: "Auctions",
+        foreignKey: "UserId",
       });
       User.hasMany(models.Product);
-      User.hasMany(models.Chat, { foreignKey: 'SenderId' });
-      User.hasMany(models.Chat, { foreignKey: 'ReceiverId' });
+      User.hasMany(models.Chat, { foreignKey: "SenderId" });
+      User.hasMany(models.Chat, { foreignKey: "ReceiverId" });
     }
   }
   User.init(
@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           notEmpty: {
             args: true,
-            msg: 'Input name should not be empty',
+            msg: "Input name should not be empty",
           },
         },
       },
@@ -47,12 +47,12 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           isEmail: {
             args: true,
-            msg: 'Invalid email format',
+            msg: "Invalid email format",
           },
         },
         unique: {
           args: true,
-          msg: 'Email already registered',
+          msg: "Email already registered",
         },
       },
       password: {
@@ -60,9 +60,7 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           passwordRequirement(value) {
             if (checkPassword(value) === false) {
-              throw new Error(
-                'Password must be at least contain a capital letter, a number or symbol, and minimum of 6 characters'
-              );
+              throw new Error("Password must be at least contain a capital letter, a number or symbol, and minimum of 6 characters");
             }
           },
         },
@@ -72,23 +70,40 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           isUrl: {
             args: true,
-            msg: 'Invalid input Url',
+            msg: "Invalid input Url",
           },
         },
       },
       balance: DataTypes.INTEGER,
+      ktpURL: {
+        type: DataTypes.STRING,
+        validate: {
+          isUrl: {
+            args: true,
+            msg: "Invalid input Url",
+          },
+        },
+      },
+      address: {
+        type: DataTypes.STRING,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: "Input address should not be empty",
+          },
+        },
+      },
     },
     {
       hooks: {
         beforeCreate: (User) => {
           User.password = hashPass(User.password);
-          User.imageUrl =
-            'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
+          User.imageUrl = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
           User.balance = 0;
         },
       },
       sequelize,
-      modelName: 'User',
+      modelName: "User",
     }
   );
   return User;
