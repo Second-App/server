@@ -18,9 +18,9 @@ module.exports = {
       'Users',
       [
         {
-          name: 'nameOfUser',
-          email: 'User@mail.com',
-          password: hashPass('User123'),
+          name: 'Nyoman Adi',
+          email: 'nyoman.adi16@gmail.com',
+          password: hashPass('Testing123'),
           imageUrl:
             'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png',
           balance: 0,
