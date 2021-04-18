@@ -5,14 +5,14 @@ const { generateToken } = require('../helpers/jwt.js');
 class UserController {
   static async register(req, res, next) {
     try {
-      const { name, email, password,ktpURL, address } = req.body;
+      const { name, email, password, ktpURL, address } = req.body;
 
       const newUser = {
         name,
         email,
         password,
         ktpURL,
-        address
+        address,
       };
 
       const newUserData = await User.create(newUser);
@@ -26,7 +26,7 @@ class UserController {
         imageUrl: newUserData.imageUrl,
         balance: newUserData.balance,
         ktpURL: newUserData.ktpURL,
-        address: newUserData.address
+        address: newUserData.address,
       });
     } catch (err) {
       next(err);
@@ -90,7 +90,7 @@ class UserController {
         imageUrl: profileData.imageUrl,
         balance: profileData.balance,
         ktpURL: profileData.ktpURL,
-        address: profileData.address
+        address: profileData.address,
       });
     } catch (err) {
       next(err);
@@ -115,7 +115,7 @@ class UserController {
         imageUrl,
         balance: profileData.balance,
         ktpURL,
-        address
+        address,
       };
 
       const updatedProfileData = await User.update(updateProfile, {
@@ -165,6 +165,34 @@ class UserController {
 
       res.status(200).json({
         msg: 'password updated',
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async updateBalance(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { balance } = req.body;
+
+      const userData = await User.findByPk(id);
+
+      if (!userData) throw err;
+
+      const newbalance = userData.balance + balance;
+
+      const updateBalanceData = await User.update(
+        { balance: newbalance },
+        {
+          where: { id },
+        }
+      );
+
+      if (!updateBalanceData) throw err;
+
+      res.status(200).json({
+        msg: 'balance updated',
       });
     } catch (err) {
       next(err);
