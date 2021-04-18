@@ -1,7 +1,5 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Auction extends Model {
     /**
@@ -11,33 +9,35 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Auction.belongsTo(models.User)
-      Auction.belongsTo(models.Product)
+      Auction.belongsTo(models.User);
+      Auction.belongsTo(models.Product);
     }
-  };
-  Auction.init({
-    UserId: DataTypes.INTEGER,
-    ProductId: DataTypes.INTEGER,
-    startPrice: DataTypes.INTEGER,
-    multiplier: DataTypes.INTEGER,
-    currentBid: {
-      type: DataTypes.INTEGER
-      // validate: {
-      //   checkBid(value) {
-      //     console.log(this.startPrice, this.multiplier, value, "<< ini di model")
-      //     if (value <= (this.startPrice + this.multiplier)) {
-      //       throw new Error(`Bid must be multipled of multiplier value`)
-      //     }
-      //   }
-      // }
+  }
+  Auction.init(
+    {
+      UserId: DataTypes.INTEGER,
+      ProductId: DataTypes.INTEGER,
+      startPrice: DataTypes.BIGINT,
+      multiplier: DataTypes.BIGINT,
+      currentBid: {
+        type: DataTypes.BIGINT,
+        // validate: {
+        //   checkBid(value) {
+        //     console.log(this.startPrice, this.multiplier, value, "<< ini di model")
+        //     if (value <= (this.startPrice + this.multiplier)) {
+        //       throw new Error(`Bid must be multipled of multiplier value`)
+        //     }
+        //   }
+        // }
+      },
+    },
+    {
+      sequelize,
+      modelName: 'Auction',
     }
-  }, {
-    sequelize,
-    modelName: 'Auction',
-  });
+  );
   Auction.addHook('beforeCreate', (auction, options) => {
-    
-    auction.currentBid = auction.multiplier + auction.startPrice
-  })
+    auction.currentBid = auction.multiplier + auction.startPrice;
+  });
   return Auction;
 };
