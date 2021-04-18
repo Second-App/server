@@ -1,27 +1,85 @@
 const request = require("supertest");
 const app = require("../app.js");
 const { generateToken } = require("../helpers/jwt");
+const { User, Wishlist, Product } = require('../models')
+const { seederUser } = require('./seeder.js');
 
-describe("testing /whistlists", () => {
-  let access_token;
-  let id;
+let access_token;
+let idUser
+let ProductId
+let WishlistId
 
-  beforeAll(() => {
-    access_token = generateToken({
-      id: 1,
-      email: "User@mail.com",
-    });
-  });
+describe("testing /wishlists", () => {
+  beforeAll((done) => {
+    seederUser()
+    .then(() => {
+      return User.findOne()
+    })
+    .then(data => {
+      const user = {
+        id: data.id,
+        email: data.email
+      }
+      idUser = user.id
+      access_token = generateToken(user)
 
+      const body = {
+        UserId: idUser,
+        TypeId:1,
+        CategoryId: 1,
+        name: 'bajubaru',
+        price: 150000,
+        description: " baju baru ",
+        imageUrl: 'https://cf.shopee.co.id/file/17360534176f08e8dc2d91320e440cdb',
+        location: 'jakarta',
+        sold: false,
+        available: true,
+        condition: 90
+      }
+
+      return Product.create(body)
+    })
+    .then(() => {
+      return Product.findOne()
+    })
+    .then(product => {
+      ProductId = product.id
+      return Wishlist.create({UserId: idUser, ProductId})
+    })
+    .then(() => {
+      return Wishlist.findOne()
+      
+    }).then((data) => {
+      WishlistId = data.id
+      done()
+    })
+    .catch(err => {
+      done(err)
+    })
+  })
+  afterAll((done) => {
+    User.destroy({ where: {}})
+    .then(() => {
+      return Product.destroy({ where: {}})
+    })
+    .then(() => {
+      return Wishlist.destroy({ where: {}})
+    })
+    .then(() => {
+      done()
+    })
+    .catch(err => {
+      done(err)
+    })
+  })
   // POST Berhasil
   describe("success POST request", () => {
     it("It should return status 201 and newly created whistlist data", (done) => {
       const body = {
-        UserId: 1,
-        CategoryId: 1,
+        ProductId,
       };
       request(app)
-        .post("/whistlists")
+        .post("/wishlists/")
         .send(body)
         .set("access_token", access_token)
         .end((err, res) => {
@@ -48,10 +106,10 @@ describe("testing /whistlists", () => {
     it("Should return response with status code 401, dont have access_token", (done) => {
       const body = {
         UserId: null,
-        CategoryId: null,
+        ProductId: null,
       };
       request(app)
-        .post("/whistlists")
+        .post("/wishlists")
         .send(body)
         .end((err, res) => {
           if (err) {
@@ -59,7 +117,7 @@ describe("testing /whistlists", () => {
           }
           expect(res.statusCode).toEqual(401);
           expect(typeof res.body).toEqual("object");
-          expect(res.body).toHaveProperty("message", "Invalid Token");
+          expect(res.body).toHaveProperty("msg", "invalid token");
 
           done();
         });
@@ -70,23 +128,18 @@ describe("testing /whistlists", () => {
   describe("success GET request", () => {
     it("It should return status 200 and get whistlist data", (done) => {
       request(app)
-        .get("/whistlists")
+        .get("/wishlists")
         .set("access_token", access_token)
         .end((err, res) => {
           if (err) {
             done(err);
           }
           expect(res.status).toEqual(200);
-          expect(typeof res.body).toEqual("object");
-          expect(res.body).toHaveProperty("id");
-          expect(res.body).toHaveProperty("UserId", body.UserId);
-          expect(res.body).toHaveProperty("ProductId", body.ProductId);
-          expect(res.body).toHaveProperty("Products", expect.any(Array));
-          expect(res.body).toHaveProperty("Users", expect.any(Array));
-
-          expect(typeof res.body.id).toEqual("number");
-          expect(typeof res.body.UserId).toEqual("number");
-          expect(typeof res.body.ProductId).toEqual("number");
+          // expect(typeof res.body).toEqual("object");
+          expect(Array.isArray(res.body)).toEqual(true)
+          expect(res.body).toEqual(
+            expect.arrayContaining([expect.any(Object)])
+          )
 
           done();
         });
@@ -97,7 +150,7 @@ describe("testing /whistlists", () => {
   describe("success DELETE request", () => {
     it("It should return status 200 and delete whistlist data", (done) => {
       request(app)
-        .delete(`/whistlists/${WhistlistId}`)
+        .delete(`/wishlists/${WishlistId}`)
         .set("access_token", access_token)
 
         .end((err, res) => {
@@ -106,7 +159,7 @@ describe("testing /whistlists", () => {
           }
           expect(res.statusCode).toEqual(200);
           expect(typeof res.body).toEqual("object");
-          expect(res.body).toHaveProperty("message", "Whistlist deleted");
+          expect(res.body).toHaveProperty("msg", "Wishlist deleted");
 
           done();
         });
@@ -117,15 +170,14 @@ describe("testing /whistlists", () => {
   describe("Failed DELETE request", () => {
     it("should return response with status code 401, dont have access_token", (done) => {
       request(app)
-        .delete(`/whistlists/${WhistlistId}`)
-        .send(body)
+        .delete(`/wishlists/${WishlistId}`)
         .end((err, res) => {
           if (err) {
             done(err);
           }
           expect(res.statusCode).toEqual(401);
           expect(typeof res.body).toEqual("object");
-          expect(res.body).toHaveProperty("message", "Invalid Token");
+          expect(res.body).toHaveProperty("msg", "invalid token");
 
           done();
         });

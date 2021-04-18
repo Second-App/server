@@ -7,6 +7,7 @@ class AuctionController {
         include: ['Product']
       })
       if (!auctionData) throw err;
+      
       res.status(200).json(auctionData)
       
     } catch (error) {
@@ -22,7 +23,7 @@ class AuctionController {
 
       const response = await Auction.create(newAuction)
       if (!response) throw err;
-      res.status(201).json(response)
+      res.status(201).json({msg: "auction created"})
 
     } catch (error) {
       next(error)
@@ -33,12 +34,27 @@ class AuctionController {
     try {
       const { id } = req.params
       const { currentBid } = req.body
-      const response = await Auction.update({currentBid}, {where: { id }})
-      if (!response) throw err;
-      res.status(200).json({
-        msg: "bid updated"
-      })
+      const { dataValues } = await Auction.findByPk(id)
+      
+      let checkBid = ((currentBid % dataValues.multiplier) || currentBid >= (dataValues.multiplier + dataValues.startPrice))
+      
+      if (checkBid !== true) {
+        throw {
+          name: 'CustomError',
+          msg: 'Bid must be multipled of multiplier value',
+          status: 404
+        }
+      } else {
+        
+        const response = await Auction.update({currentBid}, {where: { id }})
+        if (!response) throw err;
+        res.status(200).json({
+          message: "bid multiplier increased"
+        })
+      }
+      
     } catch (error) {
+      
       next(error)
     }
   }
@@ -50,7 +66,7 @@ class AuctionController {
 
       if(!response) throw err;
       res.status(200).json({
-        msg: "auction data deleted"
+        message: "auction deleted"
       })
     } catch (error) {
       next(error)

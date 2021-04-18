@@ -4,6 +4,7 @@ const { authenticate } = require('../middlewares/authenticate.js');
 const { authorizeProduct } = require('../middlewares/authorize.js');
 
 router.get('/', ProductController.getAll);
+router.get('/:id', ProductController.getById)
 
 router.use(authenticate);
 

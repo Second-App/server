@@ -8,16 +8,31 @@ class ProductController {
       });
 
       if (!productsData) throw err;
-
+      
       res.status(200).json(productsData);
     } catch (err) {
       next(err);
     }
   }
 
+  static async getById(req, res, next) {
+    try {
+      
+      const productsData = await Product.findByPk(req.params.id);
+
+      if (!productsData) throw err;
+      
+      res.status(200).json({data: productsData});
+    } catch (err) {
+      next(err);
+    }
+  }
+
   static async createProduct(req, res, next) {
+    
     try {
       const UserId = req.decoded.id;
+      // console.log(UserId, "<<< ini user id di controol")
       const {
         TypeId,
         CategoryId,
@@ -26,6 +41,7 @@ class ProductController {
         description,
         imageUrl,
         location,
+        condition
       } = req.body;
 
       const newProduct = {
@@ -37,8 +53,8 @@ class ProductController {
         description,
         imageUrl,
         location,
+        condition
       };
-
       const newProductData = await Product.create(newProduct);
 
       if (!newProductData) throw err;
@@ -53,6 +69,7 @@ class ProductController {
     try {
       const UserId = req.decoded.id;
       const { id } = req.params;
+      
       const {
         TypeId,
         CategoryId,
@@ -88,6 +105,7 @@ class ProductController {
         msg: 'data updated',
       });
     } catch (err) {
+      
       next(err);
     }
   }
@@ -149,7 +167,7 @@ class ProductController {
       if (!deleteProductData) throw err;
 
       res.status(200).json({
-        msg: 'data deleted',
+        msg: 'Product deleted',
       });
     } catch (err) {
       next(err);

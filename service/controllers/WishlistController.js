@@ -65,7 +65,7 @@ class WishlistController {
       if (!data) throw err;
 
       res.status(200).json({
-        msg: 'A wishlist has been deleted',
+        msg: 'Wishlist deleted',
       });
     } catch (err) {
       next(err);
