@@ -7,6 +7,7 @@ const virtualAccountRoute = require('./virtualAccount');
 const auctionRoute = require('./auction');
 const chatRoute = require('./chat.js');
 const categoryRoute = require('./category.js');
+const typeRoute = require('./type.js');
 // const dealsRoute = require('./deals');
 
 router.use('/users', userRoute);
@@ -17,6 +18,7 @@ router.use('/virtualAccount', virtualAccountRoute);
 router.use('/auctions', auctionRoute);
 router.use('/chats', chatRoute);
 router.use('/categories', categoryRoute);
+router.use('/types', typeRoute);
 
 // router.use('/deals', dealsRoute);
 

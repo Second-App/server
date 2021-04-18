@@ -33,7 +33,6 @@ class CartController {
         msg: 'added to cart',
       });
     } catch (err) {
-      
       next(err);
     }
   }
@@ -44,11 +43,11 @@ class CartController {
 
       const cartData = await Cart.findAll({
         where: { UserId },
-        include: ['Product'],
+        include: ['Product', 'User'],
       });
 
       if (!cartData) throw err;
-      
+
       res.status(200).json(cartData);
     } catch (err) {
       next(err);
