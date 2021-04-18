@@ -173,6 +173,8 @@ describe("USER TEST CASE", () => {
           name: 'nameOfUser',
           email: 'User2@mail.com',
           password: 'User123',
+          ktpURL: "https://1.bp.blogspot.com/-oAUps6kC-f8/WR7lPMpJGJI/AAAAAAAAAjQ/Nf__sQzVt0Y6PHk7XeUp9V_dbSwvl_UugCLcB/s400/KTP.png",
+          address: "Jakarta, Indonesia",
         };
         request(app)
           .post('/users/register')
@@ -209,6 +211,8 @@ describe("USER TEST CASE", () => {
           name: '',
           email: 'User@mail.com',
           password: 'wrongPassword',
+          ktpURL: "https://1.bp.blogspot.com/-oAUps6kC-f8/WR7lPMpJGJI/AAAAAAAAAjQ/Nf__sQzVt0Y6PHk7XeUp9V_dbSwvl_UugCLcB/s400/KTP.png",
+          address: "Jakarta, Indonesia",
         };
         request(app)
           .post('/users/register')
@@ -238,6 +242,8 @@ describe("USER TEST CASE", () => {
           name: 'nameOfUser',
           email: 'User3@mail.com',
           password: 'User123',
+          ktpURL: "https://1.bp.blogspot.com/-oAUps6kC-f8/WR7lPMpJGJI/AAAAAAAAAjQ/Nf__sQzVt0Y6PHk7XeUp9V_dbSwvl_UugCLcB/s400/KTP.png",
+          address: "Jakarta, Indonesia",
         };
         request(app)
           .post('/users/register')
@@ -270,6 +276,8 @@ describe("USER TEST CASE", () => {
           name: 'nameOfUser',
           email: 'email.com',
           password: 'User123',
+          ktpURL: "https://1.bp.blogspot.com/-oAUps6kC-f8/WR7lPMpJGJI/AAAAAAAAAjQ/Nf__sQzVt0Y6PHk7XeUp9V_dbSwvl_UugCLcB/s400/KTP.png",
+          address: "Jakarta, Indonesia",
         };
         request(app)
           .post('/users/register')
@@ -302,6 +310,8 @@ describe("USER TEST CASE", () => {
           name: 'nameOfUser',
           email: 'User2@mail.com',
           password: 'Aa1',
+          ktpURL: "https://1.bp.blogspot.com/-oAUps6kC-f8/WR7lPMpJGJI/AAAAAAAAAjQ/Nf__sQzVt0Y6PHk7XeUp9V_dbSwvl_UugCLcB/s400/KTP.png",
+          address: "Jakarta, Indonesia",
         };
         request(app)
           .post('/users/register')
@@ -365,6 +375,8 @@ describe("USER TEST CASE", () => {
           name: 'fullname user',
           email: 'user2@mail.com',
           password: 'User1234',
+          ktpURL: "https://1.bp.blogspot.com/-oAUps6kC-f8/WR7lPMpJGJI/AAAAAAAAAjQ/Nf__sQzVt0Y6PHk7XeUp9V_dbSwvl_UugCLcB/s400/KTP.png",
+          address: "Jakarta, Indonesia",
         };
   
         request(app)
@@ -388,6 +400,8 @@ describe("USER TEST CASE", () => {
           name: 'fullname user',
           email: 'user2@mail.com',
           password: 'User1234',
+          ktpURL: "https://1.bp.blogspot.com/-oAUps6kC-f8/WR7lPMpJGJI/AAAAAAAAAjQ/Nf__sQzVt0Y6PHk7XeUp9V_dbSwvl_UugCLcB/s400/KTP.png",
+          address: "Jakarta, Indonesia",
         };
   
         request(app)
@@ -408,6 +422,8 @@ describe("USER TEST CASE", () => {
           name: 'fullname user',
           email: 'user2@mail.com',
           password: 'User1234',
+          ktpURL: "https://1.bp.blogspot.com/-oAUps6kC-f8/WR7lPMpJGJI/AAAAAAAAAjQ/Nf__sQzVt0Y6PHk7XeUp9V_dbSwvl_UugCLcB/s400/KTP.png",
+          address: "Jakarta, Indonesia",
         };
   
         request(app)
@@ -429,6 +445,8 @@ describe("USER TEST CASE", () => {
           name: '',
           email: 'user2@mail.com',
           password: 'User1234',
+          ktpURL: "https://1.bp.blogspot.com/-oAUps6kC-f8/WR7lPMpJGJI/AAAAAAAAAjQ/Nf__sQzVt0Y6PHk7XeUp9V_dbSwvl_UugCLcB/s400/KTP.png",
+          address: "Jakarta, Indonesia",
         };
   
         request(app)
@@ -457,6 +475,8 @@ describe("USER TEST CASE", () => {
           name: 'fullname user',
           email: '',
           password: 'User1234',
+          ktpURL: "https://1.bp.blogspot.com/-oAUps6kC-f8/WR7lPMpJGJI/AAAAAAAAAjQ/Nf__sQzVt0Y6PHk7XeUp9V_dbSwvl_UugCLcB/s400/KTP.png",
+          address: "Jakarta, Indonesia",
         };
   
         request(app)
@@ -486,6 +506,8 @@ describe("USER TEST CASE", () => {
           name: 'fullname user',
           email: 'usermail.com',
           password: 'User1234',
+          ktpURL: "https://1.bp.blogspot.com/-oAUps6kC-f8/WR7lPMpJGJI/AAAAAAAAAjQ/Nf__sQzVt0Y6PHk7XeUp9V_dbSwvl_UugCLcB/s400/KTP.png",
+          address: "Jakarta, Indonesia",
         };
   
         request(app)
