@@ -8,7 +8,7 @@ class ProductController {
       });
 
       if (!productsData) throw err;
-      
+
       res.status(200).json(productsData);
     } catch (err) {
       next(err);
@@ -17,19 +17,17 @@ class ProductController {
 
   static async getById(req, res, next) {
     try {
-      
       const productsData = await Product.findByPk(req.params.id);
 
       if (!productsData) throw err;
-      
-      res.status(200).json({data: productsData});
+
+      res.status(200).json(productsData);
     } catch (err) {
       next(err);
     }
   }
 
   static async createProduct(req, res, next) {
-    
     try {
       const UserId = req.decoded.id;
       // console.log(UserId, "<<< ini user id di controol")
@@ -41,7 +39,7 @@ class ProductController {
         description,
         imageUrl,
         location,
-        condition
+        condition,
       } = req.body;
 
       const newProduct = {
@@ -53,7 +51,7 @@ class ProductController {
         description,
         imageUrl,
         location,
-        condition
+        condition,
       };
       const newProductData = await Product.create(newProduct);
 
@@ -69,7 +67,7 @@ class ProductController {
     try {
       const UserId = req.decoded.id;
       const { id } = req.params;
-      
+
       const {
         TypeId,
         CategoryId,
@@ -105,7 +103,6 @@ class ProductController {
         msg: 'data updated',
       });
     } catch (err) {
-      
       next(err);
     }
   }
