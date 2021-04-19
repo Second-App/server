@@ -82,7 +82,13 @@ class UserController {
       const { id } = req.params;
 
       const profileData = await User.findByPk(id);
+      
+      const userData = await User.findOne({
+        where: {id},
+        include: ["Products"]
+      })
 
+      console.log(userData)
       if (!profileData) throw err;
 
       res.status(200).json({
@@ -95,6 +101,7 @@ class UserController {
         address: profileData.address,
       });
     } catch (err) {
+      console.log(err.message)
       next(err);
     }
   }

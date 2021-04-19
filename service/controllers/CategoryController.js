@@ -22,6 +22,13 @@ class CategoryController {
         include: ['User', 'Type', 'Category'],
       });
 
+      const CategoryProducts = await Category.findOne({
+        where: {id},
+        include: ["Products"]
+      })
+
+      console.log(CategoryProducts.Products, 30)
+
       if (!productsData) throw err;
 
       res.status(200).json(productsData);
