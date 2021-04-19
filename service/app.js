@@ -26,7 +26,7 @@ io.on('connection', (socket) => {
   console.log('socket.io connected');
 
   socket.on('sendChat', (chatData) => {
-    io.emit('getSendChat', chatData);
+    socket.broadcast.emit('getSendChat', chatData);
   });
 
   socket.on('updateAuction', (auctionData) => {
