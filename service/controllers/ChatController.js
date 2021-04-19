@@ -22,36 +22,45 @@ class ChatController {
     }
   }
 
-  static async getChatsSend(req, res, next) {
-    try {
-      const chatSendData = await Chat.findAll();
-
-      chatSendData.forEach((chat) => {});
-
-      if (!chatSendData) throw err;
-
-      res.status(200).json(chatSendData);
-    } catch (err) {
-      next(err);
-    }
-  }
-
-  static async getChatReceive(req, res, next) {
+  static async getChats(req, res, next) {
     try {
       const UserId = req.decoded.id;
 
-      const chatReceiveData = await Chat.findAll({
+      const sendChatData = await Chat.findAll({
+        where: { SenderId: UserId },
+        include: ['User'],
+      });
+
+      const receiveChatData = await Chat.findAll({
         where: { ReceiverId: UserId },
         include: ['User'],
       });
 
-      if (!chatReceiveData) throw err;
-
-      res.status(200).json(chatReceiveData);
+      res.status(200).json({
+        send: sendChatData,
+        receive: receiveChatData,
+      });
     } catch (err) {
       next(err);
     }
   }
+
+  // static async getChatReceive(req, res, next) {
+  //   try {
+  //     const UserId = req.decoded.id;
+
+  //     const chatReceiveData = await Chat.findAll({
+  //       where: { ReceiverId: UserId },
+  //       include: ['User'],
+  //     });
+
+  //     if (!chatReceiveData) throw err;
+
+  //     res.status(200).json(chatReceiveData);
+  //   } catch (err) {
+  //     next(err);
+  //   }
+  // }
 
   static async deleteChat(req, res, next) {
     try {
