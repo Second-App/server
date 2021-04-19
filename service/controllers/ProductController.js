@@ -5,6 +5,10 @@ class ProductController {
     try {
       const productsData = await Product.findAll({
         include: ['Type', 'Category', 'User'],
+        where: {
+          sold: false,
+          available: true,
+        },
       });
 
       if (!productsData) throw err;
