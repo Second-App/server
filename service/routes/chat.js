@@ -7,8 +7,7 @@ router.use(authenticate);
 
 router.post('/', ChatController.createChat);
 
-router.get('/send', ChatController.getChatsSend);
-router.get('/receive', ChatController.getChatReceive);
+router.get('/', ChatController.getChats);
 
 router.use('/:id', authorizeChat);
 
