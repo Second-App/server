@@ -24,12 +24,9 @@ class ChatController {
 
   static async getChatsSend(req, res, next) {
     try {
-      const UserId = req.decoded.id;
+      const chatSendData = await Chat.findAll();
 
-      const chatSendData = await Chat.findAll({
-        where: { UserId },
-        include: ['User'],
-      });
+      chatSendData.forEach((chat) => {});
 
       if (!chatSendData) throw err;
 
