@@ -12,10 +12,6 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'SenderId',
         targetKey: 'id',
       });
-      Chat.belongsTo(models.User, {
-        foreignKey: 'ReceiverId',
-        targetKey: 'id',
-      });
     }
   }
   Chat.init(

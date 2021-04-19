@@ -25,22 +25,41 @@ class ChatController {
   static async getChats(req, res, next) {
     try {
       const UserId = req.decoded.id;
+      const { targetId } = req.query;
 
-      const sendChatData = await Chat.findAll({
-        where: { SenderId: UserId },
-        include: ['User'],
-      });
+      if (targetId) {
+        const sendChatData = await Chat.findAll({
+          where: { SenderId: UserId, ReceiverId: targetId },
+          include: ['User'],
+        });
 
-      const receiveChatData = await Chat.findAll({
-        where: { ReceiverId: UserId },
-        include: ['User'],
-      });
+        const receiveChatData = await Chat.findAll({
+          where: { ReceiverId: UserId, SenderId: targetId },
+          include: ['User', 'User'],
+        });
 
-      res.status(200).json({
-        send: sendChatData,
-        receive: receiveChatData,
-      });
+        res.status(200).json({
+          send: sendChatData,
+          receive: receiveChatData,
+        });
+      } else {
+        const sendChatData = await Chat.findAll({
+          where: { SenderId: UserId },
+          include: ['User'],
+        });
+
+        const receiveChatData = await Chat.findAll({
+          where: { ReceiverId: UserId },
+          include: ['User', 'User'],
+        });
+
+        res.status(200).json({
+          send: sendChatData,
+          receive: receiveChatData,
+        });
+      }
     } catch (err) {
+      console.log(err);
       next(err);
     }
   }
