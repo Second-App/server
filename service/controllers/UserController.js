@@ -81,7 +81,10 @@ class UserController {
     try {
       const { id } = req.params;
 
-      const profileData = await User.findByPk(id);
+      const profileData = await User.findOne({
+        where: { id },
+        include: ['Products'],
+      });
 
       if (!profileData) throw err;
 
@@ -93,6 +96,7 @@ class UserController {
         balance: profileData.balance,
         ktpURL: profileData.ktpURL,
         address: profileData.address,
+        Products: profileData.Products,
       });
     } catch (err) {
       next(err);
