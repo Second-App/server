@@ -3,11 +3,10 @@ const { Chat } = require('../models');
 class ChatController {
   static async createChat(req, res, next) {
     try {
-      const UserId = req.decoded.id;
-      const { ReceiverId, message } = req.body;
+      const { SenderId, ReceiverId, message } = req.body;
 
       const newChat = {
-        SenderId: UserId,
+        SenderId,
         ReceiverId,
         message,
       };
