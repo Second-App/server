@@ -2,6 +2,14 @@
 
 const { Product, Community, User } = require('../models');
 const midtransClient = require('midtrans-client');
+const uploadFile = require('../middlewares/multer')
+const fs = require('fs')
+const AWS = require('aws-sdk')
+
+const s3 = new AWS.S3({
+  accessKeyId: process.env.AccessKeyID,
+  secretAccessKey: process.env.SecretAccessKey,
+})
 
 class ProductController {
   static async getAll(req, res, next) {
@@ -36,83 +44,108 @@ class ProductController {
     } catch (err) {
       next(err);
     }
-  }
+    
+    static async createProduct(req, res, next) {
+        try {
+          await uploadFile(req, res)
+          if (!req.files.length) {
+            throw { message: 'please upload a file!' }
+          }
+    
+          let path = req.files[0].path
+          const params = {
+            ACL: 'public-read',
+            Bucket: 'secondh8',
+            Body: fs.createReadStream(path),
+            Key: `userData/${'_' + Math.random().toString(36).substr(2, 9)}${
+              req.files[0].originalname
+            }`,
+          }
+    
+          s3.upload(params, (err, data) => {
+            if (err) {
+              res.status(500).json(err)
+            }
+            if (data) {
+              fs.unlinkSync(path) // ini menghapus file yang dikirim agar tidak disimpan di local
+              const url = data.Location
+              const UserId = req.decoded.id
+              const newProduct = {
+                UserId,
+                TypeId: req.body.TypeId,
+                CategoryId: req.body.CategoryId,
+                name: req.body.name,
+                price: req.body.price,
+                description: req.body.description,
+                imageUrl: url,
+                location: req.body.location,
+                condition: req.body.condition
+              }
+    
+              Product.create(newProduct)
+                .then((data) => {
+                  if (!data) throw err
+                  res.status(201).json(data)
+                })
+                .catch((err) => {
+                  next(err)
+                })
+            }
+          })
+        } catch (err) {
+          next(err)
+        }
+      }
 
-  static async createProduct(req, res, next) {
-    try {
-      const UserId = req.decoded.id;
-      // console.log(UserId, "<<< ini user id di controol")
-      const { TypeId, CategoryId, name, price, description, imageUrl, location, condition } = req.body;
+    static async editAuction(req, res, next) {
+        try {
+            const { id } = req.params;
+            const { currentBid, currentUserBidName, currentUserBidId } = req.body;
 
-      const newProduct = {
-        UserId,
-        TypeId,
-        CategoryId,
-        name,
-        price,
-        description,
-        imageUrl,
-        location,
-        condition,
-      };
-      const newProductData = await Product.create(newProduct);
+            const productData = await Product.findByPk(id);
 
-      if (!newProductData) throw err;
+            if (!productData) throw err;
 
-      res.status(201).json(newProductData);
-    } catch (err) {
-      next(err);
-    }
-  }
+            const checkingBid = Number(productData.currentBid) + 10000;
 
-  static async editAuction(req, res, next) {
-    try {
-      const { id } = req.params;
-      const { currentBid, currentUserBidName, currentUserBidId } = req.body;
+            if (checkingBid > currentBid)
+                throw {
+                    name: 'CustomError',
+                    msg: 'next bid must be higher than 10000',
+                    status: 400,
+                };
 
-      const productData = await Product.findByPk(id);
+            const updateProductBid = {
+                id: productData.id,
+                UserId: productData.UserId,
+                TypeId: productData.TypeId,
+                CategoryId: productData.CategoryId,
+                name: productData.name,
+                price: productData.price,
+                description: productData.description,
+                imageUrl: productData.imageUrl,
+                location: productData.location,
+                sold: productData.sold,
+                available: productData.available,
+                condition: productData.condition,
+                startPrice: productData.startPrice,
+                currentBid,
+                currentUserBidName,
+                currentUserBidId,
+            };
 
-      if (!productData) throw err;
+            const data = await Product.update(updateProductBid, {
+                where: { id },
+            });
 
-      const checkingBid = Number(productData.currentBid) + 10000;
+            if (!data) throw err;
 
-      if (checkingBid > currentBid)
-        throw {
-          name: 'CustomError',
-          msg: 'next bid must be higher than 10000',
-          status: 400,
-        };
-
-      const updateProductBid = {
-        id: productData.id,
-        UserId: productData.UserId,
-        TypeId: productData.TypeId,
-        CategoryId: productData.CategoryId,
-        name: productData.name,
-        price: productData.price,
-        description: productData.description,
-        imageUrl: productData.imageUrl,
-        location: productData.location,
-        sold: productData.sold,
-        available: productData.available,
-        condition: productData.condition,
-        startPrice: productData.startPrice,
-        currentBid,
-        currentUserBidName,
-        currentUserBidId,
-      };
-
-      const data = await Product.update(updateProductBid, {
-        where: { id },
-      });
-
-      if (!data) throw err;
-
-      res.status(200).json({
-        msg: 'updated',
-      });
-    } catch (err) {
-      next(err);
+            res.status(200).json({
+                msg: 'updated',
+            });
+        } catch (err) {
+            next(err);
+        }
     }
   }
 
