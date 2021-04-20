@@ -1,4 +1,4 @@
-const { Product } = require('../models');
+const { Product, User } = require('../models');
 const midtransClient = require('midtrans-client');
 
 class ProductController {
@@ -40,16 +40,7 @@ class ProductController {
     try {
       const UserId = req.decoded.id;
       // console.log(UserId, "<<< ini user id di controol")
-      const {
-        TypeId,
-        CategoryId,
-        name,
-        price,
-        description,
-        imageUrl,
-        location,
-        condition,
-      } = req.body;
+      const { TypeId, CategoryId, name, price, description, imageUrl, location, condition } = req.body;
 
       const newProduct = {
         UserId,
@@ -128,17 +119,7 @@ class ProductController {
       const UserId = req.decoded.id;
       const { id } = req.params;
 
-      const {
-        TypeId,
-        CategoryId,
-        name,
-        price,
-        description,
-        imageUrl,
-        location,
-        sold,
-        available,
-      } = req.body;
+      const { TypeId, CategoryId, name, price, description, imageUrl, location, sold, available } = req.body;
 
       const editedProduct = {
         UserId,
@@ -234,18 +215,16 @@ class ProductController {
   static async checkoutProduct(req, res, next) {
     try {
       const { id } = req.params;
-      // const userId = req.decoded;
+      const currentUser = req.decoded;
       const { dataValues } = await Product.findOne({
         where: { id },
         include: ['User'],
       });
-      // const userData = await User.findOne({ where: { id: userId } });
-      // console.log(userId, "+++++++");
+      const userData = await User.findOne({ where: { id: currentUser.id } });
 
       const seller = dataValues.User.dataValues;
       const product = dataValues;
-      console.log(seller.name, '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-      console.log(product.name, '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+      const buyer = userData.dataValues;
 
       let snap = new midtransClient.Snap({
         isProduction: false,
@@ -255,21 +234,54 @@ class ProductController {
 
       let parameter = {
         transaction_details: {
-          order_id: 'order-id-node-' + Math.round(new Date().getTime() / 1000),
+          order_id: 'second-order-xx-' + Math.round(new Date().getTime() / 1000),
           gross_amount: +product.price,
+        },
+        item_details: [
+          {
+            id: product.id,
+            price: +product.price,
+            quantity: 1,
+            name: product.name,
+            brand: '',
+            category: '',
+            merchant_name: seller.name,
+          },
+        ],
+        customer_details: {
+          first_name: buyer.name,
+          last_name: '',
+          email: buyer.email,
+          phone: '+62 812 3456 1221',
+          billing_address: {
+            first_name: userData.name,
+            last_name: '',
+            email: buyer.email,
+            phone: '+62 812 3456 1221',
+            address: buyer.address,
+            city: 'Jakarta',
+            postal_code: '12190',
+            country_code: 'IDN',
+          },
+          shipping_address: {
+            first_name: buyer.name,
+            last_name: '',
+            email: buyer.email,
+            phone: '+62 812 3456 1221',
+            address: buyer.address,
+            city: 'Jakarta',
+            postal_code: '12190',
+            country_code: 'IDN',
+          },
         },
         credit_card: {
           secure: true,
         },
       };
       const transactionToken = await snap.createTransactionToken(parameter);
-      console.log(transactionToken);
-      res
-        .status(200)
-        .json({ token: transactionToken, clientKey: snap.apiConfig.clientKey });
-    } catch (err) {
-      console.log('ERROR >>>>>>>>>>>>>>>>>>>>>');
 
+      res.status(200).json({ token: transactionToken, clientKey: snap.apiConfig.clientKey });
+    } catch (err) {
       console.log(err);
       next(err);
     }
