@@ -131,12 +131,17 @@ module.exports = (sequelize, DataTypes) => {
       sold: DataTypes.BOOLEAN,
       available: DataTypes.BOOLEAN,
       condition: DataTypes.FLOAT,
+      startPrice: DataTypes.BIGINT,
+      currentBid: DataTypes.BIGINT,
+      currentUserBidName: DataTypes.STRING,
     },
     {
       hooks: {
         beforeCreate: (Product) => {
           Product.sold = false;
           Product.available = true;
+          Product.startPrice = Product.price;
+          Product.currentBid = Product.price;
         },
       },
       sequelize,

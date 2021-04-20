@@ -30,7 +30,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('updateAuction', (auctionData) => {
-    io.emit('getAuctionData', auctionData);
+    socket.broadcast.emit('getAuctionData', auctionData);
   });
 
   socket.on('updateBalance', (balanceData) => {
