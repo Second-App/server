@@ -2,6 +2,14 @@
 
 const { Product, Community } = require('../models');
 const midtransClient = require('midtrans-client');
+const uploadFile = require('../middlewares/multer')
+const fs = require('fs')
+const AWS = require('aws-sdk')
+
+const s3 = new AWS.S3({
+  accessKeyId: process.env.AccessKeyID,
+  secretAccessKey: process.env.SecretAccessKey,
+})
 
 class ProductController {
     static async getAll(req, res, next) {
@@ -40,30 +48,55 @@ class ProductController {
 
     static async createProduct(req, res, next) {
         try {
-            const UserId = req.decoded.id;
-            // console.log(UserId, "<<< ini user id di controol")
-            const { TypeId, CategoryId, name, price, description, imageUrl, location, condition } = req.body;
-
-            const newProduct = {
+          await uploadFile(req, res)
+          if (!req.files.length) {
+            throw { message: 'please upload a file!' }
+          }
+    
+          let path = req.files[0].path
+          const params = {
+            ACL: 'public-read',
+            Bucket: 'secondh8',
+            Body: fs.createReadStream(path),
+            Key: `userData/${'_' + Math.random().toString(36).substr(2, 9)}${
+              req.files[0].originalname
+            }`,
+          }
+    
+          s3.upload(params, (err, data) => {
+            if (err) {
+              res.status(500).json(err)
+            }
+            if (data) {
+              fs.unlinkSync(path) // ini menghapus file yang dikirim agar tidak disimpan di local
+              const url = data.Location
+              const UserId = req.decoded.id
+              const newProduct = {
                 UserId,
-                TypeId,
-                CategoryId,
-                name,
-                price,
-                description,
-                imageUrl,
-                location,
-                condition,
-            };
-            const newProductData = await Product.create(newProduct);
-
-            if (!newProductData) throw err;
-
-            res.status(201).json(newProductData);
+                TypeId: req.body.TypeId,
+                CategoryId: req.body.CategoryId,
+                name: req.body.name,
+                price: req.body.price,
+                description: req.body.description,
+                imageUrl: url,
+                location: req.body.location,
+                condition: req.body.condition
+              }
+    
+              Product.create(newProduct)
+                .then((data) => {
+                  if (!data) throw err
+                  res.status(201).json(data)
+                })
+                .catch((err) => {
+                  next(err)
+                })
+            }
+          })
         } catch (err) {
-            next(err);
+          next(err)
         }
-    }
+      }
 
     static async editAuction(req, res, next) {
         try {

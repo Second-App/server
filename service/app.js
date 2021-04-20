@@ -15,6 +15,7 @@ const io = require('socket.io')(http, {
   },
 });
 
+global.__basedir = __dirname;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
