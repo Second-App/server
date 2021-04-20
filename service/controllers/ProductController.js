@@ -44,6 +44,7 @@ class ProductController {
     } catch (err) {
       next(err);
     }
+  }
     
     static async createProduct(req, res, next) {
         try {
@@ -147,7 +148,6 @@ class ProductController {
             next(err);
         }
     }
-  }
 
   static async editProduct(req, res, next) {
     try {
