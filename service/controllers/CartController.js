@@ -21,7 +21,7 @@ class CartController {
       if (checkAlreadyInCart)
         throw {
           name: 'CustomError',
-          mgs: 'Item already in cart',
+          msg: 'Item already in cart',
           status: 404,
         };
 
