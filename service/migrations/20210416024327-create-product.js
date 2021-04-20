@@ -68,6 +68,9 @@ module.exports = {
       currentUserBidName: {
         type: Sequelize.STRING,
       },
+      currentUserBidId: {
+        type: Sequelize.INTEGER,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
