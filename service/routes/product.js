@@ -9,9 +9,10 @@ router.get('/:id', ProductController.getById);
 router.use(authenticate);
 
 router.post('/', ProductController.createProduct);
+router.get('/checkout/:id', ProductController.checkoutProduct);
 
 router.put('/:id', authorizeProduct, ProductController.editProduct);
-router.patch('/sold/:id', authorizeProduct, ProductController.editSold);
+router.patch('/sold/:id', ProductController.editSold);
 router.patch(
   '/available/:id',
   authorizeProduct,

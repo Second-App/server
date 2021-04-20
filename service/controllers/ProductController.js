@@ -1,4 +1,5 @@
 const { Product } = require('../models');
+const midtransClient = require('midtrans-client');
 
 class ProductController {
   static async getAll(req, res, next) {
@@ -225,6 +226,50 @@ class ProductController {
         msg: 'Product deleted',
       });
     } catch (err) {
+      next(err);
+    }
+  }
+
+  static async checkoutProduct(req, res, next) {
+    try {
+      const { id } = req.params;
+      // const userId = req.decoded;
+      const { dataValues } = await Product.findOne({
+        where: { id },
+        include: ['User'],
+      });
+      // const userData = await User.findOne({ where: { id: userId } });
+      // console.log(userId, "+++++++");
+
+      const seller = dataValues.User.dataValues;
+      const product = dataValues;
+      console.log(seller.name, '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+      console.log(product.name, '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+
+      let snap = new midtransClient.Snap({
+        isProduction: false,
+        serverKey: 'SB-Mid-server-JqApsadC5gDq85Ewopy-iW_V',
+        clientKey: 'SB-Mid-client-tFhuCmNTmy26af7I',
+      });
+
+      let parameter = {
+        transaction_details: {
+          order_id: 'order-id-node-' + Math.round(new Date().getTime() / 1000),
+          gross_amount: +product.price,
+        },
+        credit_card: {
+          secure: true,
+        },
+      };
+      const transactionToken = await snap.createTransactionToken(parameter);
+      console.log(transactionToken);
+      res
+        .status(200)
+        .json({ token: transactionToken, clientKey: snap.apiConfig.clientKey });
+    } catch (err) {
+      console.log('ERROR >>>>>>>>>>>>>>>>>>>>>');
+
+      console.log(err);
       next(err);
     }
   }
