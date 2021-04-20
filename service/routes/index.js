@@ -1,3 +1,5 @@
+/** @format */
+
 const router = require('express').Router();
 const userRoute = require('./user');
 const productRoute = require('./product');
@@ -8,6 +10,7 @@ const chatRoute = require('./chat.js');
 const categoryRoute = require('./category.js');
 const typeRoute = require('./type.js');
 const auctionRoute = require('./auction.js');
+const communityRoute = require('./community.js');
 // const dealsRoute = require('./deals');
 
 router.use('/users', userRoute);
@@ -19,6 +22,7 @@ router.use('/chats', chatRoute);
 router.use('/categories', categoryRoute);
 router.use('/types', typeRoute);
 router.use('/auction', auctionRoute);
+router.use('/community', communityRoute);
 
 // router.use('/deals', dealsRoute);
 
