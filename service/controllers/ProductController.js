@@ -1,4 +1,6 @@
-const { Product, User } = require('../models');
+/** @format */
+
+const { Product, Community, User } = require('../models');
 const midtransClient = require('midtrans-client');
 
 class ProductController {
@@ -286,6 +288,31 @@ class ProductController {
       next(err);
     }
   }
+
+  static changeOwner = async (req, res, next) => {
+    try {
+      console.log(req.body, 'ini reqbody');
+      const { newUserId, ProductId, id } = req.body;
+      const data = await Product.update(
+        {
+          UserId: newUserId,
+        },
+        {
+          where: { id: ProductId },
+          returning: true,
+        }
+      );
+
+      if (!data) throw err;
+      console.log(data, 'ini bentuk cinta <<<<<<<');
+      const deleteCom = await Community.destroy({ where: { id } });
+
+      res.status(200).json(data);
+    } catch (err) {
+      console.log(err, ' ini ksjfklasdjklf;ajsdkl');
+      next(err);
+    }
+  };
 }
 
 module.exports = ProductController;

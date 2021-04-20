@@ -31,9 +31,12 @@ class CommunityController {
 
             if (!newCommunityData) throw err;
 
-            res.status(201).json({
-                msg: 'added to Community',
+            const bebek = await Community.findOne({
+                include: ['Product', 'User'],
             });
+
+            console.log(bebek, 'ini bebek');
+            res.status(201).json(bebek);
         } catch (err) {
             next(err);
         }
@@ -44,7 +47,6 @@ class CommunityController {
             const UserId = req.decoded.id;
 
             const CommunityData = await Community.findAll({
-                where: { UserId },
                 include: ['Product', 'User'],
             });
 
