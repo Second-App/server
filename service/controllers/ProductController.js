@@ -71,6 +71,56 @@ class ProductController {
     }
   }
 
+  static async editAuction(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { currentBid, currentUserBidName } = req.body;
+
+      const productData = await Product.findByPk(id);
+
+      if (!productData) throw err;
+
+      const checkingBid = Number(productData.currentBid) + 10000;
+
+      if (checkingBid > currentBid)
+        throw {
+          name: 'CustomError',
+          msg: 'next bid must be higher than 10000',
+          status: 400,
+        };
+
+      const updateProductBid = {
+        id: productData.id,
+        UserId: productData.UserId,
+        TypeId: productData.TypeId,
+        CategoryId: productData.CategoryId,
+        name: productData.name,
+        price: productData.price,
+        description: productData.description,
+        imageUrl: productData.imageUrl,
+        location: productData.location,
+        sold: productData.sold,
+        available: productData.available,
+        condition: productData.condition,
+        startPrice: productData.startPrice,
+        currentBid,
+        currentUserBidName,
+      };
+
+      const data = await Product.update(updateProductBid, {
+        where: { id },
+      });
+
+      if (!data) throw err;
+
+      res.status(200).json({
+        msg: 'updated',
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
   static async editProduct(req, res, next) {
     try {
       const UserId = req.decoded.id;

@@ -59,6 +59,15 @@ module.exports = {
       condition: {
         type: Sequelize.FLOAT,
       },
+      startPrice: {
+        type: Sequelize.BIGINT,
+      },
+      currentBid: {
+        type: Sequelize.BIGINT,
+      },
+      currentUserBidName: {
+        type: Sequelize.STRING,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

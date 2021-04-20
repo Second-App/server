@@ -138,16 +138,110 @@ module.exports = (sequelize, DataTypes) => {
             available: DataTypes.BOOLEAN,
             condition: DataTypes.FLOAT,
         },
-        {
-            hooks: {
-                beforeCreate: (Product) => {
-                    Product.sold = false;
-                    Product.available = true;
-                },
-            },
-            sequelize,
-            modelName: 'Product',
-        }
-    );
-    return Product;
+      },
+      TypeId: {
+        type: DataTypes.INTEGER,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'TypeId should not be empty',
+          },
+          isInt: {
+            args: true,
+            msg: 'TypeId should be a number integer value',
+          },
+        },
+      },
+      CategoryId: {
+        type: DataTypes.INTEGER,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'CategoryId should not be empty',
+          },
+          isInt: {
+            args: true,
+            msg: 'CategoryId should be a number integer value',
+          },
+        },
+      },
+      name: {
+        type: DataTypes.STRING,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'Input name should not be empty',
+          },
+        },
+      },
+      price: {
+        type: DataTypes.BIGINT,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'Input price should not be empty',
+          },
+          isInt: {
+            args: true,
+            msg: 'Input price should be a number integer value',
+          },
+          notNegative(value) {
+            if (value < 0) {
+              throw new Error('Input price should not be a negative value');
+            }
+          },
+        },
+      },
+      description: {
+        type: DataTypes.STRING,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'Input description should not be empty',
+          },
+        },
+      },
+      imageUrl: {
+        type: DataTypes.STRING,
+        // validate: {
+        //   notEmpty: {
+        //     args: true,
+        //     msg: 'Input imageUrl should not be empty',
+        //   },
+        //   isUrl: {
+        //     args: true,
+        //     msg: 'Invalid input Url',
+        //   },
+        // },
+      },
+      location: {
+        type: DataTypes.STRING,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'Input location should not be empty',
+          },
+        },
+      },
+      sold: DataTypes.BOOLEAN,
+      available: DataTypes.BOOLEAN,
+      condition: DataTypes.FLOAT,
+      startPrice: DataTypes.BIGINT,
+      currentBid: DataTypes.BIGINT,
+      currentUserBidName: DataTypes.STRING,
+    },
+    {
+      hooks: {
+        beforeCreate: (Product) => {
+          Product.sold = false;
+          Product.available = true;
+          Product.startPrice = Product.price;
+          Product.currentBid = Product.price;
+        },
+      },
+      sequelize,
+      modelName: 'Product',
+    }
+  );
+  return Product;
 };

@@ -1,13 +1,9 @@
-const router = require('express').Router()
-const AuctionController = require('../controllers/AuctionController')
+const router = require('express').Router();
+const ProductController = require('../controllers/ProductController.js');
 const { authenticate } = require('../middlewares/authenticate.js');
 
-router.get('/', AuctionController.getAll) 
+router.use(authenticate);
 
-router.use(authenticate)
-router.post('/', AuctionController.create)
+router.put('/:id', ProductController.editAuction);
 
-router.patch('/:id', AuctionController.updateCurrentBid)
-router.delete('/:id', AuctionController.delete)
-
-module.exports = router
+module.exports = router;
