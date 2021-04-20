@@ -33,6 +33,10 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('getAuctionData', auctionData);
   });
 
+  socket.on('auctionWinner', () => {
+    io.emit('getAuctionWinner');
+  });
+
   socket.on('updateBalance', (balanceData) => {
     socket.emit('getBalanceData', balanceData);
   });
