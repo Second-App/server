@@ -75,7 +75,7 @@ class ProductController {
   static async editAuction(req, res, next) {
     try {
       const { id } = req.params;
-      const { currentBid, currentUserBidName } = req.body;
+      const { currentBid, currentUserBidName, currentUserBidId } = req.body;
 
       const productData = await Product.findByPk(id);
 
@@ -106,6 +106,7 @@ class ProductController {
         startPrice: productData.startPrice,
         currentBid,
         currentUserBidName,
+        currentUserBidId,
       };
 
       const data = await Product.update(updateProductBid, {

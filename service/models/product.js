@@ -140,6 +140,7 @@ module.exports = (sequelize, DataTypes) => {
       startPrice: DataTypes.BIGINT,
       currentBid: DataTypes.BIGINT,
       currentUserBidName: DataTypes.STRING,
+      currentUserBidId: DataTypes.INTEGER,
     },
     {
       hooks: {
