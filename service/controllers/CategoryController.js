@@ -7,10 +7,12 @@ class CategoryController {
         include: ['Products'],
       });
 
+      /* istanbul ignore next */
       if (!categoryData) throw err;
 
       res.status(200).json(categoryData);
     } catch (err) {
+      /* istanbul ignore next */
       next(err);
     }
   }
@@ -18,12 +20,12 @@ class CategoryController {
   static async getProductsByCategoryId(req, res, next) {
     try {
       const { id } = req.params;
-      
+
       const productsData = await Product.findAll({
         where: { CategoryId: +id },
         include: ['User', 'Type', 'Category'],
       });
-      
+
       if (!productsData || productsData.length === 0) throw err;
 
       res.status(200).json(productsData);
