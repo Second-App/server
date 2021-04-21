@@ -40,7 +40,7 @@ class ProductController {
       });
 
       if (!productsData) throw err;
-      
+
       res.status(200).json(productsData);
     } catch (err) {
       next(err);
@@ -70,11 +70,11 @@ class ProductController {
             res.status(201).json(data);
           })
           .catch((err) => {
-            console.log(err)
+            console.log(err);
             next(err);
           });
 
-          return
+        return;
       }
 
       let path = req.files[0].path;
@@ -89,7 +89,7 @@ class ProductController {
 
       s3.upload(params, (err, data) => {
         if (err) {
-          console.log(err)
+          console.log(err);
           res.status(500).json(err);
         }
         if (data) {
@@ -114,13 +114,13 @@ class ProductController {
               res.status(201).json(data);
             })
             .catch((err) => {
-              console.log(err)
+              console.log(err);
               next(err);
             });
         }
       });
     } catch (err) {
-      console.log(err)
+      console.log(err);
       next(err);
     }
   }
@@ -180,9 +180,9 @@ class ProductController {
     try {
       const UserId = req.decoded.id;
       const { id } = req.params;
-      
-      await uploadFile(req, res)
-      if(!req.files || !req.files.length) {
+
+      await uploadFile(req, res);
+      if (!req.files || !req.files.length) {
         const {
           TypeId,
           CategoryId,
@@ -193,9 +193,9 @@ class ProductController {
           sold,
           available,
           condition,
-          imageUrl
+          imageUrl,
         } = req.body;
-  
+
         const editedProduct = {
           UserId,
           TypeId,
@@ -207,44 +207,43 @@ class ProductController {
           sold,
           available,
           condition,
-          imageUrl
+          imageUrl,
         };
 
         Product.update(editedProduct, {
           where: { id },
         })
-        .then(editedProduct => {
-          if (!editedProduct) throw err;
-          res.status(200).json({
-            msg: 'data updated',
+          .then((editedProduct) => {
+            if (!editedProduct) throw err;
+            res.status(200).json({
+              msg: 'data updated',
+            });
+          })
+          .catch((err) => {
+            next(err);
           });
-        })
-        .catch(err => {
-          
-          next(err)
-        })
-        return
+        return;
         // throw { message: 'please upload a file!' }
       }
-      let path = req.files[0].path
+      let path = req.files[0].path;
       const params = {
         ACL: 'public-read',
         Bucket: 'secondh8',
         Body: fs.createReadStream(path),
         Key: `userData/${'_' + Math.random().toString(36).substr(2, 9)}${
           req.files[0].originalname
-        }`
-      }
-      
+        }`,
+      };
+
       s3.upload(params, (err, data) => {
         if (err) {
-          console.log(err, "error disini")
-          res.status(500).json(err)
+          console.log(err, 'error disini');
+          res.status(500).json(err);
         }
         if (data) {
-          fs.unlinkSync(path)
-          const url = data.Location
-          
+          fs.unlinkSync(path);
+          const url = data.Location;
+
           const {
             TypeId,
             CategoryId,
@@ -254,9 +253,9 @@ class ProductController {
             location,
             sold,
             available,
-            condition
+            condition,
           } = req.body;
-    
+
           const editedProduct = {
             UserId,
             TypeId,
@@ -268,25 +267,23 @@ class ProductController {
             location,
             sold,
             available,
-            condition
+            condition,
           };
-          
+
           Product.update(editedProduct, {
             where: { id },
           })
-          .then(editedProduct => {
-            if (!editedProduct) throw err;
-            res.status(200).json({
-              msg: 'data updated',
+            .then((editedProduct) => {
+              if (!editedProduct) throw err;
+              res.status(200).json({
+                msg: 'data updated',
+              });
+            })
+            .catch((err) => {
+              next(err);
             });
-          })
-          .catch(err => {
-            
-            next(err)
-          })
         }
-      })
-      
+      });
     } catch (err) {
       next(err);
     }

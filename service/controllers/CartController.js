@@ -9,7 +9,7 @@ class CartController {
         UserId,
         ProductId,
       };
-      console.log(ProductId, req.body, "<< ini product ID")
+      console.log(ProductId, req.body, '<< ini product ID');
 
       const checkAlreadyInCart = await Cart.findOne({
         where: {
@@ -28,11 +28,14 @@ class CartController {
       const newCartData = await Cart.create(newCart);
 
       if (!newCartData) throw err;
-      const find = await Cart.findOne({ where: { UserId, ProductId }, include: ['Product', 'User'] });
+      const find = await Cart.findOne({
+        where: { UserId, ProductId },
+        include: ['Product', 'User'],
+      });
 
       res.status(201).json(find);
     } catch (err) {
-      console.log(err, '<< ini errornya')
+      console.log(err, '<< ini errornya');
       next(err);
     }
   }
@@ -57,7 +60,7 @@ class CartController {
   static async deleteCart(req, res, next) {
     try {
       const { id } = req.params;
-      
+
       const deleteCartData = await Cart.destroy({
         where: { id },
       });

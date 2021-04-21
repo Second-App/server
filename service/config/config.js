@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 const env = process.env.NODE_ENV;
 
 if (env !== 'production') {

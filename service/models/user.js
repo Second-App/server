@@ -65,6 +65,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         validate: {
           passwordRequirement(value) {
+            /* istanbul ignore next */
             if (checkPassword(value) === false) {
               throw new Error(
                 'Password must be at least contain a capital letter, a number or symbol, and minimum of 6 characters'
