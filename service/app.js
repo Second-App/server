@@ -34,8 +34,12 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('getAuctionData', auctionData);
   });
 
-  socket.on('auctionWinner', (data) => {
-    io.emit('getAuctionWinner', data);
+  socket.on('auctionWinnerToOther', () => {
+    socket.broadcast.emit('getAuctionWinnerToOther');
+  });
+
+  socket.on('auctionWinnerToSelf', () => {
+    socket.emit('getAuctionWinnerToSelf');
   });
 
   socket.on('updateAuctionTime', (time) => {
