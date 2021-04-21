@@ -1,14 +1,14 @@
 const { User } = require('../models');
 const { comparePass } = require('../helpers/bcrypt.js');
 const { generateToken } = require('../helpers/jwt.js');
-const uploadFile = require('../middlewares/multer')
-const fs = require('fs')
-const AWS = require('aws-sdk')
+const uploadFile = require('../middlewares/multer');
+const fs = require('fs');
+const AWS = require('aws-sdk');
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.AccessKeyID,
   secretAccessKey: process.env.SecretAccessKey,
-})
+});
 
 class UserController {
   static async register(req, res, next) {
@@ -113,65 +113,65 @@ class UserController {
 
   static async editProfile(req, res, next) {
     try {
-      await uploadFile(req, res)
-      
-      if(!req.files.length) {
-        throw { message: 'please upload a file!' }
+      await uploadFile(req, res);
+
+      if (!req.files.length) {
+        throw { message: 'please upload a file!' };
       }
-      
-      let pathImageUrl = req.files[0].path
+
+      let pathImageUrl = req.files[0].path;
       const paramsImage = {
         ACL: 'public-read',
         Bucket: 'secondh8',
         Body: fs.createReadStream(pathImageUrl),
         Key: `userData/${'_' + Math.random().toString(36).substr(2, 9)}${
           req.files[0].originalname
-        }` 
-      }
-      const { id } = req.params
+        }`,
+      };
+      const { id } = req.params;
       s3.upload(paramsImage, (err, data) => {
         if (err) {
-          console.log(err, "<< error disini")
-          res.status(500).json(err)
+          console.log(err, '<< error disini');
+          res.status(500).json(err);
         }
         if (data) {
-          fs.unlinkSync(pathImageUrl) //menghapus file yg dikirim
-          console.log(data.Location, "<< data di cont upload")
-          const urlImage = data.Location
+          fs.unlinkSync(pathImageUrl); //menghapus file yg dikirim
+          console.log(data.Location, '<< data di cont upload');
+          const urlImage = data.Location;
 
           User.findByPk(id)
-          .then((profile) => {
-            if (!profile) throw err;
-            const { name, email, address } = req.body;
-  
-            const updateProfile = {
-              id,
-              name,
-              email,
-              password: profile.password,
-              imageUrl: urlImage,
-              balance: profile.balance,
-              address,
-            };
-            console.log(updateProfile)
-            return User.update(updateProfile, {
-              where: { id },
+            .then((profile) => {
+              if (!profile) throw err;
+              const { name, email, address } = req.body;
+
+              const updateProfile = {
+                id,
+                name,
+                email,
+                password: profile.password,
+                imageUrl: urlImage,
+                balance: profile.balance,
+                address,
+              };
+              console.log(updateProfile);
+              return User.update(updateProfile, {
+                where: { id },
+              });
+            })
+            .then((updatedProfile) => {
+              if (!updatedProfile) throw err;
+              res.status(200).json({
+                msg: 'data updated',
+              });
+            })
+            .catch((err) => {
+              console.log(err, '<< error get id');
+              next(err);
             });
-          })
-          .then((updatedProfile) => {
-            if (!updatedProfile) throw err;
-            res.status(200).json({
-              msg: 'data updated',
-            });
-          })
-          .catch((err) => {
-            console.log(err, "<< error get id")
-            next(err)
-          })
         }
-      })
+      });
     } catch (err) {
-      console.log(err, "<< error di catch")
+      console.log(err, '<< error di catch');
       next(err);
     }
   }
@@ -186,7 +186,10 @@ class UserController {
 
       const { oldpassword, newpassword } = req.body;
 
-      const comparePassword = await comparePass(oldpassword, profileData.password);
+      const comparePassword = await comparePass(
+        oldpassword,
+        profileData.password
+      );
 
       if (!comparePassword)
         throw {

@@ -97,6 +97,7 @@ module.exports = (sequelize, DataTypes) => {
             msg: 'Input price should be a number integer value',
           },
           notNegative(value) {
+            /* istanbul ignore next */
             if (value < 0) {
               throw new Error('Input price should not be a negative value');
             }
