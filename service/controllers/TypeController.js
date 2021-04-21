@@ -9,7 +9,6 @@ class TypeController {
       if (!typesData) throw err;
 
       res.status(200).json(typesData);
-      /* istanbul ignore next */
     } catch (err) {
       /* istanbul ignore next */
       next(err);
@@ -29,7 +28,6 @@ class TypeController {
       if (!productsData) throw err;
 
       res.status(200).json(productsData);
-      /* istanbul ignore next */
     } catch (err) {
       /* istanbul ignore next */
       next(err);
