@@ -12,7 +12,7 @@
     "db:migrate:development": "NODE_ENV=development npx sequelize db:migrate",
     "db:migrate:undo:all:development": "NODE_ENV=development npx sequelize db:migrate:undo:all",
     "db:seed:all:development": "NODE_ENV=development npx sequelize db:seed:all",
-    "test": "NODE_ENV=test npx jest --detectOpenHandles --forceExit --runInBand",
+    "test": "NODE_ENV=test npx jest --detectOpenHandles --forceExit --runInBand --coverage",
     "dev": "NODE_ENV=development npx nodemon bin/http.js",
     "start": "node bin/http.js"
   },

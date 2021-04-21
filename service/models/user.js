@@ -66,7 +66,9 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           passwordRequirement(value) {
             if (checkPassword(value) === false) {
-              throw new Error('Password must be at least contain a capital letter, a number or symbol, and minimum of 6 characters');
+              throw new Error(
+                'Password must be at least contain a capital letter, a number or symbol, and minimum of 6 characters'
+              );
             }
           },
         },
@@ -83,12 +85,12 @@ module.exports = (sequelize, DataTypes) => {
       balance: DataTypes.BIGINT,
       ktpURL: {
         type: DataTypes.STRING,
-        validate: {
-          isUrl: {
-            args: true,
-            msg: 'Invalid input Url',
-          },
-        },
+        // validate: {
+        //   isUrl: {
+        //     args: true,
+        //     msg: 'Invalid input Url',
+        //   },
+        // },
       },
       address: {
         type: DataTypes.STRING,
@@ -104,7 +106,8 @@ module.exports = (sequelize, DataTypes) => {
       hooks: {
         beforeCreate: (User) => {
           User.password = hashPass(User.password);
-          User.imageUrl = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
+          User.imageUrl =
+            'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
           User.balance = 0;
         },
       },
