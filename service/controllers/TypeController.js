@@ -18,7 +18,7 @@ class TypeController {
       const { id } = req.params;
 
       const productsData = await Product.findAll({
-        where: { TypeId: id },
+        where: { TypeId: id, currentUserBidId: null },
         include: ['User', 'Type', 'Category'],
       });
 
