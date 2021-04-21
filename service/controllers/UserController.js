@@ -11,6 +11,7 @@ const s3 = new AWS.S3({
 });
 
 class UserController {
+  /* istanbul ignore next */
   static async register(req, res, next) {
     try {
       const { name, email, password, ktpURL, address } = req.body;
@@ -257,7 +258,7 @@ class UserController {
       const deleteUserData = await User.destroy({
         where: { id },
       });
-
+      /* istanbul ignore if */
       if (!deleteUserData) throw err;
 
       res.status(200).json({
