@@ -27,6 +27,7 @@ class ProductController {
 
       res.status(200).json(productsData);
     } catch (err) {
+      /* istanbul ignore next */
       next(err);
     }
   }
@@ -43,6 +44,7 @@ class ProductController {
 
       res.status(200).json(productsData);
     } catch (err) {
+      /* istanbul ignore next */
       next(err);
     }
   }
@@ -76,7 +78,7 @@ class ProductController {
 
         return;
       }
-
+      /* istanbul ignore next */
       let path = req.files[0].path;
       const params = {
         ACL: 'public-read',
@@ -86,7 +88,7 @@ class ProductController {
           req.files[0].originalname
         }`,
       };
-
+      /* istanbul ignore next */
       s3.upload(params, (err, data) => {
         if (err) {
           console.log(err);
@@ -433,7 +435,6 @@ class ProductController {
 
   static changeOwner = async (req, res, next) => {
     try {
-      console.log(req.body, 'ini reqbody');
       const { newUserId, ProductId, id } = req.body;
       const data = await Product.update(
         {
@@ -446,12 +447,10 @@ class ProductController {
       );
 
       if (!data) throw err;
-      console.log(data, 'ini bentuk cinta <<<<<<<');
       const deleteCom = await Community.destroy({ where: { id } });
 
       res.status(200).json(data);
     } catch (err) {
-      console.log(err, ' ini ksjfklasdjklf;ajsdkl');
       next(err);
     }
   };

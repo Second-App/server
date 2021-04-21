@@ -358,6 +358,7 @@ describe('testing /products', () => {
     })
   })
 
+  //SUccess
   describe("GET products by id /products/:id", () => {
     it("should return with status code 200 and returned object", (done) => {
       request(app)
@@ -387,6 +388,31 @@ describe('testing /products', () => {
       })
     })
   })
+
+  // GET FAIL
+
+  // describe("FAILED CASE GET BY ID: DELETED PRODUCT", () => {
+  //   beforeAll((done) => {
+  //     Product.destroy({where: {id: ProductId}})
+  //     .then(() => {
+  //       done()
+  //     })
+  //     .catch((err) => {
+  //       done(err)
+  //     })
+  //   })
+  //   it("It should returned with status code 500", (done) => {
+  //     request(app)
+  //     .get(`/products/${ProductId}`)
+  //     .send()
+  //     .end((err, res) => {
+  //       if (err) done(err);
+  //       expect(res.statusCode).toEqual(500)
+  //       expect(res.body).toHaveProperty('msg', 'Internal Server Error')
+  //       done()
+  //     })
+  //   })
+  // })
 
   describe("PUT product case", () => {
     // POST berhasil
@@ -697,3 +723,4 @@ describe('testing /products', () => {
   })
 
 });
+
