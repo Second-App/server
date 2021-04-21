@@ -114,16 +114,16 @@ module.exports = (sequelize, DataTypes) => {
       },
       imageUrl: {
         type: DataTypes.STRING,
-        // validate: {
-        //   notEmpty: {
-        //     args: true,
-        //     msg: 'Input imageUrl should not be empty',
-        //   },
-        //   isUrl: {
-        //     args: true,
-        //     msg: 'Invalid input Url',
-        //   },
-        // },
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'Input imageUrl should not be empty',
+          },
+          isUrl: {
+            args: true,
+            msg: 'Invalid input Url',
+          },
+        },
       },
       location: {
         type: DataTypes.STRING,

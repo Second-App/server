@@ -2,12 +2,15 @@ const request = require("supertest");
 const app = require("../app.js");
 const { generateToken } = require("../helpers/jwt");
 const { User, Wishlist, Product } = require('../models')
-const { seederUser } = require('./seeder.js');
+const { seederUser, seederSecondUser } = require('./seeder.js');
 
 let access_token;
 let idUser
 let ProductId
 let WishlistId
+
+let secondUserId
+let secondUserAccess_token
 
 describe("testing /wishlists", () => {
   beforeAll((done) => {
@@ -51,6 +54,18 @@ describe("testing /wishlists", () => {
       
     }).then((data) => {
       WishlistId = data.id
+      return seederSecondUser()
+    })
+    .then(() => {
+      return User.findAll()
+    })
+    .then((users) => {
+      const user = {
+        id: users[1].id,
+        email: users[1].email
+      }
+      secondUserId = users[1].id,
+      secondUserAccess_token = generateToken(user)
       done()
     })
     .catch(err => {
@@ -81,15 +96,16 @@ describe("testing /wishlists", () => {
       request(app)
         .post("/wishlists/")
         .send(body)
-        .set("access_token", access_token)
+        .set("access_token", secondUserAccess_token)
         .end((err, res) => {
           if (err) {
             done(err);
           }
+          
           expect(res.status).toEqual(201);
           expect(typeof res.body).toEqual("object");
           expect(res.body).toHaveProperty("id");
-          expect(res.body).toHaveProperty("UserId", body.UserId);
+          expect(res.body).toHaveProperty("UserId");
           expect(res.body).toHaveProperty("ProductId", body.ProductId);
 
           expect(typeof res.body.id).toEqual("number");

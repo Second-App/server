@@ -40,7 +40,7 @@ class ProductController {
       });
 
       if (!productsData) throw err;
-
+      
       res.status(200).json(productsData);
     } catch (err) {
       next(err);
@@ -50,8 +50,31 @@ class ProductController {
   static async createProduct(req, res, next) {
     try {
       await uploadFile(req, res);
-      if (!req.files.length) {
-        throw { message: 'please upload a file!' };
+      if (!req.files || !req.files.length) {
+        const UserId = req.decoded.id;
+        const newProduct = {
+          UserId,
+          TypeId: req.body.TypeId,
+          CategoryId: req.body.CategoryId,
+          name: req.body.name,
+          price: req.body.price,
+          description: req.body.description,
+          imageUrl: req.body.imageUrl,
+          location: req.body.location,
+          condition: req.body.condition,
+        };
+
+        Product.create(newProduct)
+          .then((data) => {
+            if (!data) throw err;
+            res.status(201).json(data);
+          })
+          .catch((err) => {
+            console.log(err)
+            next(err);
+          });
+
+          return
       }
 
       let path = req.files[0].path;
@@ -159,9 +182,49 @@ class ProductController {
       const { id } = req.params;
       
       await uploadFile(req, res)
-      if(!req.files.length) {
-        
-        throw { message: 'please upload a file!' }
+      if(!req.files || !req.files.length) {
+        const {
+          TypeId,
+          CategoryId,
+          name,
+          price,
+          description,
+          location,
+          sold,
+          available,
+          condition,
+          imageUrl
+        } = req.body;
+  
+        const editedProduct = {
+          UserId,
+          TypeId,
+          CategoryId,
+          name,
+          price,
+          description,
+          location,
+          sold,
+          available,
+          condition,
+          imageUrl
+        };
+
+        Product.update(editedProduct, {
+          where: { id },
+        })
+        .then(editedProduct => {
+          if (!editedProduct) throw err;
+          res.status(200).json({
+            msg: 'data updated',
+          });
+        })
+        .catch(err => {
+          
+          next(err)
+        })
+        return
+        // throw { message: 'please upload a file!' }
       }
       let path = req.files[0].path
       const params = {
