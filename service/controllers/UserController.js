@@ -148,10 +148,7 @@ class UserController {
 
       const { oldpassword, newpassword } = req.body;
 
-      const comparePassword = await comparePass(
-        oldpassword,
-        profileData.password
-      );
+      const comparePassword = await comparePass(oldpassword, profileData.password);
 
       if (!comparePassword)
         throw {
@@ -186,7 +183,7 @@ class UserController {
 
       if (!userData) throw err;
 
-      const newbalance = userData.balance + balance;
+      const newbalance = Number(userData.balance) + Number(balance);
 
       const updateBalanceData = await User.update(
         { balance: newbalance },

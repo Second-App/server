@@ -28,10 +28,9 @@ class CartController {
       const newCartData = await Cart.create(newCart);
 
       if (!newCartData) throw err;
+      const find = await Cart.findOne({ where: { UserId, ProductId }, include: ['Product', 'User'] });
 
-      res.status(201).json({
-        msg: 'added to cart',
-      });
+      res.status(201).json(find);
     } catch (err) {
       next(err);
     }
