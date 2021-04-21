@@ -10,7 +10,6 @@ let ProductId
 let CartId
 let secondUserId
 let secondAccess_token
-let cartData
 
 describe("CART TEST CASE", () => {
   beforeAll((done) => {
@@ -95,8 +94,7 @@ describe("CART TEST CASE", () => {
         const body = {
           ProductId
         };
-        // console.log(secondAccess_token, access_token, secondUserId, idUser, "<<<<< ini post")
-        console.log(CartId, "<<< ini Cart ID")
+        
         request(app)
           .post('/carts')
           .send(body)
@@ -110,12 +108,93 @@ describe("CART TEST CASE", () => {
           });
       });
     });
+
+    describe('POST FAILED CASE: not sending ProductId', () => {
+      it('It should return with status code 500 and return new data', (done) => {
+        const body = {
+          ProductId
+        };
+        // console.log(secondAccess_token, access_token, secondUserId, idUser, "<<<<< ini post")
+        
+        request(app)
+          .post('/carts')
+          .send()
+          .set('access_token', secondAccess_token)
+          .end((err, res) => {
+            if (err) done(err);
+            expect(res.statusCode).toEqual(500);
+            expect(res.body).toHaveProperty('msg', 'Internal Server Error')
+
+            done();
+          });
+      });
+    });
+
+    describe('POST FAILED CASE: product already in cart', () => {
+      it('It should return with status code 404 and return new data', (done) => {
+        const body = {
+          ProductId
+        };
+        
+        request(app)
+          .post('/carts')
+          .send(body)
+          .set('access_token', secondAccess_token)
+          .end((err, res) => {
+            if (err) done(err);
+            expect(res.statusCode).toEqual(404);
+            expect(res.body).toHaveProperty('msg', 'Item already in cart')
+
+            done();
+          });
+      });
+    });
+
+    describe('POST FAILED CASE: product id undefined value', () => {
+      it('It should return with status code 404 and return new data', (done) => {
+        const body = {
+          ProductId: 'failed'
+        };
+        
+        request(app)
+          .post('/carts')
+          .send(body)
+          .set('access_token', access_token)
+          .end((err, res) => {
+            if (err) done(err);
+            expect(res.statusCode).toEqual(500);
+            expect(res.body).toHaveProperty('msg', 'Internal Server Error')
+
+            done();
+          });
+      });
+    });
+
+    describe('POST FAILED CASE: not sending access token', () => {
+      it('It should return with status code 404 and return new data', (done) => {
+        const body = {
+          ProductId
+        };
+        
+        request(app)
+          .post('/carts')
+          .send(body)
+          .end((err, res) => {
+            if (err) done(err);
+            expect(res.statusCode).toEqual(401);
+            expect(res.body).toHaveProperty('msg', 'invalid token')
+
+            done();
+          });
+      });
+    });
+
   });
   
   describe('GET carts', () => {
     describe('GET SUCCESS CASE', () => {
       it("It should returned with status code 200", (done) => {
-        console.log(CartId, "<<< ini Cart ID")
+        
         request(app)
         .get('/carts/')
         .send()
@@ -133,10 +212,53 @@ describe("CART TEST CASE", () => {
         })
       })
     })
+
+    describe('GET FAILED CASE: not sending access token', () => {
+      it("It should returned with status code 401", (done) => {
+        
+        request(app)
+        .get('/carts/')
+        .send()
+        .end((err, res) => {
+          if (err) done(err)
+          expect(res.statusCode).toEqual(401)
+          expect(res.body).toHaveProperty('msg', 'invalid token')
+
+          done()
+        })
+      })
+    })
+
+    describe('GET FAILED CASE: empty carts', () => {
+      beforeAll((done) => {
+        Cart.destroy({ where: {UserId: secondUserId}})
+        .then(() => {
+          done()
+        })
+        .catch((err) => {
+          done(err)
+        })
+      })
+      it("It should returned with status code 500", (done) => {
+        
+        request(app)
+        .get('/carts/')
+        .send()
+        .set('access_token', secondAccess_token)
+        .end((err, res) => {
+          if (err) done(err)
+          expect(res.statusCode).toEqual(500)
+          expect(res.body).toHaveProperty('msg', 'Internal Server Error')
+
+          done()
+        })
+      })
+    })
+
   })
   
   describe('DELETE CASE: delete cart', () => {
-    console.log(CartId, cartData,"<<<< ini di delete")
+    
     describe('DELETE SUCCESS CASE', () => {
       it('Should return with status code 200', (done) => {
         request(app)
@@ -151,6 +273,22 @@ describe("CART TEST CASE", () => {
         });
       });
     });
+
+    describe('DELETE FAILED CASE: Cart id not found', () => {
+      it('Should return with status code 404', (done) => {
+        request(app)
+        .delete(`/carts/1000`)
+        .set('access_token', access_token)
+        .end((err, res) => {
+          if (err) done(err);
+          expect(res.statusCode).toEqual(404);
+          expect(typeof res.body).toEqual('object');
+          expect(res.body).toHaveProperty('msg', 'Id not found');
+          done();
+        });
+      });
+    });
+    
 
     describe('DELETE FAILED CASE: dont have access token/access token invalid', () => {
       it('Should return with status code 401', (done) => {
