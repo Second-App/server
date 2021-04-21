@@ -29,9 +29,13 @@ class CommunityController {
 
       const newCommunityData = await Community.create(newCommunity);
 
+      /* istanbul ignore next */
       if (!newCommunityData) throw err;
 
-      const bebek = await Community.findOne({ where: { UserId, ProductId }, include: ['Product', 'User'] });
+      const bebek = await Community.findOne({
+        where: { UserId, ProductId },
+        include: ['Product', 'User'],
+      });
 
       res.status(201).json(bebek);
     } catch (err) {
@@ -51,6 +55,7 @@ class CommunityController {
 
       res.status(200).json(CommunityData);
     } catch (err) {
+      /* istanbul ignore next */
       next(err);
     }
   }
@@ -69,6 +74,7 @@ class CommunityController {
         msg: 'Community deleted',
       });
     } catch (err) {
+      /* istanbul ignore next */
       next(err);
     }
   }
