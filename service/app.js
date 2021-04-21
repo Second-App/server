@@ -1,4 +1,3 @@
-/* istanbul ignore file */
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
@@ -24,6 +23,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(routes);
 app.use(errorHandler);
 
+/* istanbul ignore next */
 io.on('connection', (socket) => {
   console.log('socket.io connected');
 
