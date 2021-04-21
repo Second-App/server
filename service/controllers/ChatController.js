@@ -12,7 +12,7 @@ class ChatController {
       };
 
       const newChatData = await Chat.create(newChat);
-
+      /* istanbul ignore next */
       if (!newChatData) throw err;
 
       res.status(201).json(newChatData);
@@ -58,7 +58,7 @@ class ChatController {
         });
       }
     } catch (err) {
-      console.log(err);
+      /* istanbul ignore next */
       next(err);
     }
   }
@@ -79,7 +79,7 @@ class ChatController {
   //     next(err);
   //   }
   // }
-
+  /* istanbul ignore next */
   static async deleteChat(req, res, next) {
     try {
       const { id } = req.params;
@@ -88,6 +88,7 @@ class ChatController {
         where: { id },
       });
 
+      /* istanbul ignore next */
       if (!deleteChatData) throw err;
 
       res.status(200).json({
