@@ -33,7 +33,6 @@ class CommunityController {
 
       const bebek = await Community.findOne({ where: { UserId, ProductId }, include: ['Product', 'User'] });
 
-      console.log(bebek, 'ini bebek');
       res.status(201).json(bebek);
     } catch (err) {
       next(err);
