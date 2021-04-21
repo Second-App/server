@@ -1,6 +1,14 @@
 const { User } = require('../models');
 const { comparePass } = require('../helpers/bcrypt.js');
 const { generateToken } = require('../helpers/jwt.js');
+const uploadFile = require('../middlewares/multer')
+const fs = require('fs')
+const AWS = require('aws-sdk')
+
+const s3 = new AWS.S3({
+  accessKeyId: process.env.AccessKeyID,
+  secretAccessKey: process.env.SecretAccessKey,
+})
 
 class UserController {
   static async register(req, res, next) {
@@ -105,35 +113,86 @@ class UserController {
 
   static async editProfile(req, res, next) {
     try {
-      const { id } = req.params;
-
-      const profileData = await User.findByPk(id);
-      // console.log(profileData)
-      if (!profileData) throw err;
-
-      const { name, email, imageUrl, ktpURL, address } = req.body;
-
-      const updateProfile = {
-        id,
-        name,
-        email,
-        password: profileData.password,
-        imageUrl,
-        balance: profileData.balance,
-        ktpURL,
-        address,
-      };
-
-      const updatedProfileData = await User.update(updateProfile, {
-        where: { id },
-      });
-
-      if (!updatedProfileData) throw err;
-
-      res.status(200).json({
-        msg: 'data updated',
-      });
+      await uploadFile(req, res)
+      console.log(req.body, req.files,'<<masuk sini!!!!!!!!!!!!!!')
+      if(!req.files.length) {
+        console.log("ERROR")
+        throw { message: 'please upload a file!' }
+      }
+      console.log(req.files, "<< di cont")
+      let pathImageUrl = req.files[0].path
+      let pathKtpUrl = req.files[1].path
+      const paramsImage = {
+        ACL: 'public-read',
+        Bucket: 'secondh8',
+        Body: fs.createReadStream(pathImageUrl),
+        Key: `userData/${'_' + Math.random().toString(36).substr(2, 9)}${
+          req.files[0].originalname
+        }` 
+      }
+      const paramsKtp = {
+        ACL: 'public-read',
+        Bucket: 'secondh8',
+        Body: fs.createReadStream(pathKtpUrl),
+        Key: `userData/${'_' + Math.random().toString(36).substr(2, 9)}${
+          req.files[1].originalname
+        }`
+      }
+      
+      s3.upload(paramsImage, (err, data) => {
+        if (err) {
+          console.log(err, "<< error disini")
+          res.status(500).json(err)
+        }
+        if (data) {
+          fs.unlinkSync(pathImageUrl) //menghapus file yg dikirim
+          console.log(data.Location, "<< data di cont upload")
+          const urlImage = data.Location
+          s3.upload(paramsKtp, (err, data) => {
+            if (err) {
+              console.log(err, "<< error di upload ktp")
+              res.status(500).json(err)
+            } else if (data) {
+              fs.unlinkSync(pathKtpUrl)
+              const ktpUrl = data.Location
+              const { id } = req.params;
+              
+              User.findByPk(id)
+              .then((profile) => {
+                if (!profile) throw err;
+                const { name, email, address } = req.body;
+      
+                const updateProfile = {
+                  id,
+                  name,
+                  email,
+                  password: profile.password,
+                  imageUrl: urlImage,
+                  balance: profile.balance,
+                  ktpURL: ktpUrl,
+                  address,
+                };
+                console.log(updateProfile)
+                return User.update(updateProfile, {
+                  where: { id },
+                });
+              })
+              .then((updatedProfile) => {
+                if (!updatedProfile) throw err;
+                res.status(200).json({
+                  msg: 'data updated',
+                });
+              })
+              .catch((err) => {
+                console.log(err, "<< error get id")
+                next(err)
+              })
+            }
+          })
+        }
+      })
     } catch (err) {
+      console.log(err, "<< error di catch")
       next(err);
     }
   }
