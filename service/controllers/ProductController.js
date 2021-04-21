@@ -66,6 +66,7 @@ class ProductController {
 
       s3.upload(params, (err, data) => {
         if (err) {
+          console.log(err)
           res.status(500).json(err);
         }
         if (data) {
@@ -90,11 +91,13 @@ class ProductController {
               res.status(201).json(data);
             })
             .catch((err) => {
+              console.log(err)
               next(err);
             });
         }
       });
     } catch (err) {
+      console.log(err)
       next(err);
     }
   }
@@ -157,6 +160,7 @@ class ProductController {
       
       await uploadFile(req, res)
       if(!req.files.length) {
+        
         throw { message: 'please upload a file!' }
       }
       let path = req.files[0].path
@@ -171,7 +175,7 @@ class ProductController {
       
       s3.upload(params, (err, data) => {
         if (err) {
-          
+          console.log(err, "error disini")
           res.status(500).json(err)
         }
         if (data) {
@@ -187,6 +191,7 @@ class ProductController {
             location,
             sold,
             available,
+            condition
           } = req.body;
     
           const editedProduct = {
@@ -200,7 +205,9 @@ class ProductController {
             location,
             sold,
             available,
+            condition
           };
+          
           Product.update(editedProduct, {
             where: { id },
           })
@@ -210,7 +217,10 @@ class ProductController {
               msg: 'data updated',
             });
           })
-          .catch(err => next(err))
+          .catch(err => {
+            
+            next(err)
+          })
         }
       })
       
