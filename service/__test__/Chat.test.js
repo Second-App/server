@@ -4,14 +4,13 @@ const { generateToken } = require("../helpers/jwt");
 const { User, Chat, Product } = require('../models')
 const { seederUser, seederSecondUser } = require('./seeder.js');
 
-let access_token;
+let access_token
 let SenderId
 let ReceiverId
 let message = "hello"
 let ChatId
 
 
-let secondUserId
 let secondUserAccess_token
 
 describe("testing /chats", () => {
@@ -25,49 +24,31 @@ describe("testing /chats", () => {
         id: data.id,
         email: data.email
       }
-      idUser = user.id
+      SenderId = user.id
       access_token = generateToken(user)
 
-      const body = {
-        UserId: idUser,
-        TypeId:1,
-        CategoryId: 1,
-        name: 'bajubaru',
-        price: 150000,
-        description: " baju baru ",
-        imageUrl: 'https://cf.shopee.co.id/file/17360534176f08e8dc2d91320e440cdb',
-        location: 'jakarta',
-        sold: false,
-        available: true,
-        condition: 90
-      }
-
-      return Product.create(body)
-    })
-    .then(() => {
-      return Product.findOne()
-    })
-    .then(product => {
-      ProductId = product.id
-      return Chat.create({UserId: idUser, ProductId})
-    })
-    .then(() => {
-      return Chat.findOne()
-      
-    }).then((data) => {
-      ChatId = data.id
       return seederSecondUser()
     })
     .then(() => {
       return User.findAll()
     })
-    .then((users) => {
+    .then(users => {
       const user = {
         id: users[1].id,
         email: users[1].email
       }
-      secondUserId = users[1].id,
+      ReceiverId = users[1].id,
       secondUserAccess_token = generateToken(user)
+      return Chat.create({
+        SenderId,
+        ReceiverId,
+        message
+      })
+    })
+    .then(() => {
+      return Chat.findOne()
+    }).then((data) => {
+      ChatId = data.id
       done()
     })
     .catch(err => {
@@ -76,9 +57,6 @@ describe("testing /chats", () => {
   })
   afterAll((done) => {
     User.destroy({ where: {}})
-    .then(() => {
-      return Product.destroy({ where: {}})
-    })
     .then(() => {
       return Chat.destroy({ where: {}})
     })
@@ -93,10 +71,12 @@ describe("testing /chats", () => {
   describe("success POST request", () => {
     it("It should return status 201 and newly created chats data", (done) => {
       const body = {
-        ProductId,
+        SenderId,
+        ReceiverId,
+        message
       };
       request(app)
-        .post("/wishlists/")
+        .post("/chats/")
         .send(body)
         .set("access_token", secondUserAccess_token)
         .end((err, res) => {
@@ -107,12 +87,13 @@ describe("testing /chats", () => {
           expect(res.status).toEqual(201);
           expect(typeof res.body).toEqual("object");
           expect(res.body).toHaveProperty("id");
-          expect(res.body).toHaveProperty("UserId");
-          expect(res.body).toHaveProperty("ProductId", body.ProductId);
+          expect(res.body).toHaveProperty("SenderId");
+          expect(res.body).toHaveProperty("ReceiverId");
+          expect(res.body).toHaveProperty("message");
 
-          expect(typeof res.body.id).toEqual("number");
-          expect(typeof res.body.UserId).toEqual("number");
-          expect(typeof res.body.ProductId).toEqual("number");
+          expect(typeof res.body.SenderId).toEqual("number");
+          expect(typeof res.body.ReceiverId).toEqual("number");
+          expect(typeof res.body.message).toEqual("string");
 
           done();
         });
@@ -120,85 +101,108 @@ describe("testing /chats", () => {
   });
 
   // POST Gagal
-  // describe("Failed POST request", () => {
-  //   it("Should return response with status code 401, dont have access_token", (done) => {
-  //     const body = {
-  //       UserId: null,
-  //       ProductId: null,
-  //     };
-  //     request(app)
-  //       .post("/wishlists")
-  //       .send(body)
-  //       .end((err, res) => {
-  //         if (err) {
-  //           done(err);
-  //         }
-  //         expect(res.statusCode).toEqual(401);
-  //         expect(typeof res.body).toEqual("object");
-  //         expect(res.body).toHaveProperty("msg", "invalid token");
+  describe("Failed POST request", () => {
+    it("Should return response with status code 401, dont have access_token", (done) => {
+      const body = {
+        UserId: null,
+        ProductId: null,
+      };
+      request(app)
+        .post("/chats")
+        .send(body)
+        .end((err, res) => {
+          if (err) {
+            done(err);
+          }
+          expect(res.statusCode).toEqual(401);
+          expect(typeof res.body).toEqual("object");
+          expect(res.body).toHaveProperty("msg", "invalid token");
 
-  //         done();
-  //       });
-  //   });
-  // });
+          done();
+        });
+    });
+  });
 
-  // // GET Berhasil
-  // describe("success GET request", () => {
-  //   it("It should return status 200 and get whistlist data", (done) => {
-  //     request(app)
-  //       .get("/wishlists")
-  //       .set("access_token", access_token)
-  //       .end((err, res) => {
-  //         if (err) {
-  //           done(err);
-  //         }
-  //         expect(res.status).toEqual(200);
-  //         // expect(typeof res.body).toEqual("object");
-  //         expect(Array.isArray(res.body)).toEqual(true)
-  //         expect(res.body).toEqual(
-  //           expect.arrayContaining([expect.any(Object)])
-  //         )
+  // GET Berhasil
+  describe("success GET request", () => {
+    it("It should return status 200 and get chats data", (done) => {
+      request(app)
+        .get("/chats")
+        .set("access_token", secondUserAccess_token)
+        .end((err, res) => {
+          if (err) {
+            done(err);
+          }
+          expect(res.status).toEqual(200);
+          expect(typeof res.body).toEqual("object");
+          expect(typeof res.body.send).toEqual("object");
+          expect(typeof res.body.receive).toEqual("object");
+          expect(res.body).toHaveProperty("send")
+          expect(res.body).toHaveProperty("receive")
 
-  //         done();
-  //       });
-  //   });
-  // });
+          done();
+        });
+    });
+  });
 
-  // // DELETE Berhasil
-  // describe("success DELETE request", () => {
-  //   it("It should return status 200 and delete whistlist data", (done) => {
-  //     request(app)
-  //       .delete(`/wishlists/${WishlistId}`)
-  //       .set("access_token", access_token)
+  describe("success GET request", () => {
+    it("It should return status 200 and get chats data", (done) => {
+      request(app)
+        .get("/chats?targetId=" + (ReceiverId + 1))
+        .set("access_token", access_token)
+        .end((err, res) => {
+          if (err) {
+            done(err);
+          }
+          expect(res.status).toEqual(200);
+          expect(typeof res.body).toEqual("object");
+          expect(typeof res.body.send).toEqual("object");
+          expect(typeof res.body.receive).toEqual("object");
+          expect(res.body).toHaveProperty("send")
+          expect(res.body).toHaveProperty("receive")
 
-  //       .end((err, res) => {
-  //         if (err) {
-  //           done(err);
-  //         }
-  //         expect(res.statusCode).toEqual(200);
-  //         expect(typeof res.body).toEqual("object");
-  //         expect(res.body).toHaveProperty("msg", "Wishlist deleted");
+          done();
+        });
+    });
+  });
 
-  //         done();
-  //       });
-  //   });
-  // });
+  // POST FAIL, NO RECEIVER ID
+  describe("fail POST request", () => {
+    it("should return response with status code 404, not found", (done) => {
+      request(app)
+        .post("/chats?targetId=" + (ReceiverId + 10))
+        .send({
+          message: ""
+        })
+        .set("access_token", access_token)
+        .end((err, res) => {
+          if (err) {
+            done(err);
+          }
+          expect(res.status).toEqual(400);
+          expect(typeof res.body).toEqual("object");
+          expect(res.body).toHaveProperty("msg")
 
-  // // DELETE Gagal
-  // describe("Failed DELETE request", () => {
-  //   it("should return response with status code 401, dont have access_token", (done) => {
-  //     request(app)
-  //       .delete(`/wishlists/${WishlistId}`)
-  //       .end((err, res) => {
-  //         if (err) {
-  //           done(err);
-  //         }
-  //         expect(res.statusCode).toEqual(401);
-  //         expect(typeof res.body).toEqual("object");
-  //         expect(res.body).toHaveProperty("msg", "invalid token");
+          done();
+        });
+    });
+  });
 
-  //         done();
-  //       });
-  //   });
-  // });
+  // DELETE Gagal
+  describe("Failed DELETE request", () => {
+    it("should return response with status code 401, dont have access_token", (done) => {
+      request(app)
+        .delete(`/chats/${ChatId}`)
+        .end((err, res) => {
+          if (err) {
+            done(err);
+          }
+          expect(res.statusCode).toEqual(401);
+          expect(typeof res.body).toEqual("object");
+          expect(res.body).toHaveProperty("msg", "invalid token");
+
+          done();
+        });
+    });
+  });
 });
