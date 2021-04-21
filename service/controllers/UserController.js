@@ -114,14 +114,12 @@ class UserController {
   static async editProfile(req, res, next) {
     try {
       await uploadFile(req, res)
-      console.log(req.body, req.files,'<<masuk sini!!!!!!!!!!!!!!')
+      
       if(!req.files.length) {
-        console.log("ERROR")
         throw { message: 'please upload a file!' }
       }
-      console.log(req.files, "<< di cont")
+      
       let pathImageUrl = req.files[0].path
-      let pathKtpUrl = req.files[1].path
       const paramsImage = {
         ACL: 'public-read',
         Bucket: 'secondh8',
@@ -130,15 +128,7 @@ class UserController {
           req.files[0].originalname
         }` 
       }
-      const paramsKtp = {
-        ACL: 'public-read',
-        Bucket: 'secondh8',
-        Body: fs.createReadStream(pathKtpUrl),
-        Key: `userData/${'_' + Math.random().toString(36).substr(2, 9)}${
-          req.files[1].originalname
-        }`
-      }
-      
+      const { id } = req.params
       s3.upload(paramsImage, (err, data) => {
         if (err) {
           console.log(err, "<< error disini")
@@ -148,46 +138,35 @@ class UserController {
           fs.unlinkSync(pathImageUrl) //menghapus file yg dikirim
           console.log(data.Location, "<< data di cont upload")
           const urlImage = data.Location
-          s3.upload(paramsKtp, (err, data) => {
-            if (err) {
-              console.log(err, "<< error di upload ktp")
-              res.status(500).json(err)
-            } else if (data) {
-              fs.unlinkSync(pathKtpUrl)
-              const ktpUrl = data.Location
-              const { id } = req.params;
-              
-              User.findByPk(id)
-              .then((profile) => {
-                if (!profile) throw err;
-                const { name, email, address } = req.body;
-      
-                const updateProfile = {
-                  id,
-                  name,
-                  email,
-                  password: profile.password,
-                  imageUrl: urlImage,
-                  balance: profile.balance,
-                  ktpURL: ktpUrl,
-                  address,
-                };
-                console.log(updateProfile)
-                return User.update(updateProfile, {
-                  where: { id },
-                });
-              })
-              .then((updatedProfile) => {
-                if (!updatedProfile) throw err;
-                res.status(200).json({
-                  msg: 'data updated',
-                });
-              })
-              .catch((err) => {
-                console.log(err, "<< error get id")
-                next(err)
-              })
-            }
+
+          User.findByPk(id)
+          .then((profile) => {
+            if (!profile) throw err;
+            const { name, email, address } = req.body;
+  
+            const updateProfile = {
+              id,
+              name,
+              email,
+              password: profile.password,
+              imageUrl: urlImage,
+              balance: profile.balance,
+              address,
+            };
+            console.log(updateProfile)
+            return User.update(updateProfile, {
+              where: { id },
+            });
+          })
+          .then((updatedProfile) => {
+            if (!updatedProfile) throw err;
+            res.status(200).json({
+              msg: 'data updated',
+            });
+          })
+          .catch((err) => {
+            console.log(err, "<< error get id")
+            next(err)
           })
         }
       })
