@@ -5,11 +5,11 @@ class CartController {
     try {
       const UserId = req.decoded.id;
       const { ProductId } = req.body;
-
       const newCart = {
         UserId,
         ProductId,
       };
+      console.log(ProductId, req.body, "<< ini product ID")
 
       const checkAlreadyInCart = await Cart.findOne({
         where: {
@@ -32,6 +32,7 @@ class CartController {
 
       res.status(201).json(find);
     } catch (err) {
+      console.log(err, '<< ini errornya')
       next(err);
     }
   }
@@ -56,7 +57,7 @@ class CartController {
   static async deleteCart(req, res, next) {
     try {
       const { id } = req.params;
-
+      
       const deleteCartData = await Cart.destroy({
         where: { id },
       });

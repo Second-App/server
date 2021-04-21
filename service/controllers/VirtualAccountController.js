@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 const { VirtualAccount } = require('../models');
 
 class VirtualAccountController {

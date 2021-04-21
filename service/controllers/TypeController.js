@@ -5,10 +5,13 @@ class TypeController {
     try {
       const typesData = await Type.findAll();
 
+      /* istanbul ignore next */
       if (!typesData) throw err;
 
       res.status(200).json(typesData);
+      /* istanbul ignore next */
     } catch (err) {
+      /* istanbul ignore next */
       next(err);
     }
   }
@@ -22,10 +25,13 @@ class TypeController {
         include: ['User', 'Type', 'Category'],
       });
 
+      /* istanbul ignore next */
       if (!productsData) throw err;
 
       res.status(200).json(productsData);
+      /* istanbul ignore next */
     } catch (err) {
+      /* istanbul ignore next */
       next(err);
     }
   }

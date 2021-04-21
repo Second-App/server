@@ -18,13 +18,13 @@ class CategoryController {
   static async getProductsByCategoryId(req, res, next) {
     try {
       const { id } = req.params;
-
+      
       const productsData = await Product.findAll({
-        where: { CategoryId: id },
+        where: { CategoryId: +id },
         include: ['User', 'Type', 'Category'],
       });
-
-      if (!productsData) throw err;
+      
+      if (!productsData || productsData.length === 0) throw err;
 
       res.status(200).json(productsData);
     } catch (err) {

@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 const request = require('supertest');
 const app = require('../app.js');
 const { User, Product, Deal } = require('../models')
