@@ -154,41 +154,66 @@ class ProductController {
     try {
       const UserId = req.decoded.id;
       const { id } = req.params;
-
-      const {
-        TypeId,
-        CategoryId,
-        name,
-        price,
-        description,
-        imageUrl,
-        location,
-        sold,
-        available,
-      } = req.body;
-
-      const editedProduct = {
-        UserId,
-        TypeId,
-        CategoryId,
-        name,
-        price,
-        description,
-        imageUrl,
-        location,
-        sold,
-        available,
-      };
-
-      const editedProductData = await Product.update(editedProduct, {
-        where: { id },
-      });
-
-      if (!editedProductData) throw err;
-
-      res.status(200).json({
-        msg: 'data updated',
-      });
+      
+      await uploadFile(req, res)
+      if(!req.files.length) {
+        throw { message: 'please upload a file!' }
+      }
+      let path = req.files[0].path
+      const params = {
+        ACL: 'public-read',
+        Bucket: 'secondh8',
+        Body: fs.createReadStream(path),
+        Key: `userData/${'_' + Math.random().toString(36).substr(2, 9)}${
+          req.files[0].originalname
+        }`
+      }
+      
+      s3.upload(params, (err, data) => {
+        if (err) {
+          
+          res.status(500).json(err)
+        }
+        if (data) {
+          fs.unlinkSync(path)
+          const url = data.Location
+          
+          const {
+            TypeId,
+            CategoryId,
+            name,
+            price,
+            description,
+            location,
+            sold,
+            available,
+          } = req.body;
+    
+          const editedProduct = {
+            UserId,
+            TypeId,
+            CategoryId,
+            name,
+            price,
+            description,
+            imageUrl: url,
+            location,
+            sold,
+            available,
+          };
+          Product.update(editedProduct, {
+            where: { id },
+          })
+          .then(editedProduct => {
+            if (!editedProduct) throw err;
+            res.status(200).json({
+              msg: 'data updated',
+            });
+          })
+          .catch(err => next(err))
+        }
+      })
+      
     } catch (err) {
       next(err);
     }
