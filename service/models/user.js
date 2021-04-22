@@ -1,3 +1,5 @@
+/** @format */
+
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
@@ -10,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      User.belongsToMany(models.Product, {
+        through: 'Communities',
+        foreignKey: 'UserId',
+      });
       User.belongsToMany(models.Product, {
         through: 'Carts',
         foreignKey: 'UserId',
@@ -59,6 +65,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         validate: {
           passwordRequirement(value) {
+            /* istanbul ignore next */
             if (checkPassword(value) === false) {
               throw new Error(
                 'Password must be at least contain a capital letter, a number or symbol, and minimum of 6 characters'
@@ -76,7 +83,25 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-      balance: DataTypes.INTEGER,
+      balance: DataTypes.BIGINT,
+      ktpURL: {
+        type: DataTypes.STRING,
+        // validate: {
+        //   isUrl: {
+        //     args: true,
+        //     msg: 'Invalid input Url',
+        //   },
+        // },
+      },
+      address: {
+        type: DataTypes.STRING,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'Input address should not be empty',
+          },
+        },
+      },
     },
     {
       hooks: {

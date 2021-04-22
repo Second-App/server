@@ -1,6 +1,4 @@
-'use strict';
-
-const { hashPass } = require('../helpers/bcrypt.js');
+"use strict";
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -13,20 +11,24 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
      */
-
     await queryInterface.bulkInsert(
-      'Users',
+      "Types",
       [
         {
-          name: 'Nyoman Adi',
-          email: 'nyoman.adi16@gmail.com',
-          password: hashPass('Testing123'),
-          imageUrl:
-            'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png',
-          balance: 0,
-          ktpURL:
-            'https://1.bp.blogspot.com/-oAUps6kC-f8/WR7lPMpJGJI/AAAAAAAAAjQ/Nf__sQzVt0Y6PHk7XeUp9V_dbSwvl_UugCLcB/s400/KTP.png',
-          address: 'Jakarta',
+          id: 1,
+          name: "Full-Payment",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 2,
+          name: "Auction",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 3,
+          name: "Shared-Goods",
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -42,6 +44,6 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
-    await queryInterface.bulkDelete('Users', null, {});
+    await queryInterface.bulkDelete("Types", null, {});
   },
 };

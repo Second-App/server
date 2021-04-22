@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("Products", {
+    await queryInterface.createTable('Products', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -11,35 +11,35 @@ module.exports = {
       UserId: {
         type: Sequelize.INTEGER,
         references: {
-          model: "Users",
-          key: "id",
+          model: 'Users',
+          key: 'id',
         },
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE",
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       },
       TypeId: {
         type: Sequelize.INTEGER,
         references: {
-          model: "Types",
-          key: "id",
+          model: 'Types',
+          key: 'id',
         },
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE",
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       },
       CategoryId: {
         type: Sequelize.INTEGER,
         references: {
-          model: "Categories",
-          key: "id",
+          model: 'Categories',
+          key: 'id',
         },
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE",
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       },
       name: {
         type: Sequelize.STRING,
       },
       price: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.BIGINT,
       },
       description: {
         type: Sequelize.STRING,
@@ -56,6 +56,21 @@ module.exports = {
       available: {
         type: Sequelize.BOOLEAN,
       },
+      condition: {
+        type: Sequelize.FLOAT,
+      },
+      startPrice: {
+        type: Sequelize.BIGINT,
+      },
+      currentBid: {
+        type: Sequelize.BIGINT,
+      },
+      currentUserBidName: {
+        type: Sequelize.STRING,
+      },
+      currentUserBidId: {
+        type: Sequelize.INTEGER,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -67,6 +82,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("Products");
+    await queryInterface.dropTable('Products');
   },
 };

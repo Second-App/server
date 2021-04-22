@@ -1,5 +1,5 @@
-"use strict";
-const { Model } = require("sequelize");
+'use strict';
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Chat extends Model {
     /**
@@ -8,18 +8,29 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Chat.belongsTo(models.User);
+      Chat.belongsTo(models.User, {
+        foreignKey: 'SenderId',
+        targetKey: 'id',
+      });
     }
   }
   Chat.init(
     {
       SenderId: DataTypes.INTEGER,
       ReceiverId: DataTypes.INTEGER,
-      message: DataTypes.STRING,
+      message: {
+        type: DataTypes.STRING,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'Input message should not be empty',
+          },
+        },
+      },
     },
     {
       sequelize,
-      modelName: "Chat",
+      modelName: 'Chat',
     }
   );
   return Chat;

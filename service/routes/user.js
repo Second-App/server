@@ -5,14 +5,13 @@ const { authorizeUser } = require('../middlewares/authorize.js');
 
 router.post('/register', UserController.register);
 router.post('/login', UserController.login);
+router.patch('/topup/:id', UserController.updateBalance);
 
 router.use(authenticate);
 
-router.use('/:id', authorizeUser);
-
-router.get('/:id', UserController.getProfile);
-router.put('/:id', UserController.editProfile);
-router.patch('/:id', UserController.changePassword);
-router.delete('/:id', UserController.deleteUser);
+router.get('/:id', authorizeUser, UserController.getProfile);
+router.put('/:id', authorizeUser, UserController.editProfile);
+router.patch('/password/:id', authorizeUser, UserController.changePassword);
+router.delete('/:id', authorizeUser, UserController.deleteUser);
 
 module.exports = router;

@@ -1,7 +1,5 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class VirtualAccount extends Model {
     /**
@@ -12,12 +10,15 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
-  };
-  VirtualAccount.init({
-    balance: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'VirtualAccount',
-  });
+  }
+  VirtualAccount.init(
+    {
+      balance: DataTypes.BIGINT,
+    },
+    {
+      sequelize,
+      modelName: 'VirtualAccount',
+    }
+  );
   return VirtualAccount;
 };

@@ -22,7 +22,13 @@ module.exports = {
         type: Sequelize.STRING,
       },
       balance: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.BIGINT,
+      },
+      ktpURL: {
+        type: Sequelize.STRING,
+      },
+      address: {
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,

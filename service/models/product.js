@@ -1,3 +1,5 @@
+/** @format */
+
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
@@ -8,6 +10,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      Product.belongsToMany(models.User, {
+        through: 'Communities',
+        foreignKey: 'ProductId',
+      });
       Product.belongsToMany(models.User, {
         through: 'Carts',
         foreignKey: 'ProductId',
@@ -80,7 +86,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       price: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BIGINT,
         validate: {
           notEmpty: {
             args: true,
@@ -91,13 +97,22 @@ module.exports = (sequelize, DataTypes) => {
             msg: 'Input price should be a number integer value',
           },
           notNegative(value) {
+            /* istanbul ignore next */
             if (value < 0) {
               throw new Error('Input price should not be a negative value');
             }
           },
         },
       },
-      description: DataTypes.STRING,
+      description: {
+        type: DataTypes.STRING,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'Input description should not be empty',
+          },
+        },
+      },
       imageUrl: {
         type: DataTypes.STRING,
         validate: {
@@ -122,12 +137,19 @@ module.exports = (sequelize, DataTypes) => {
       },
       sold: DataTypes.BOOLEAN,
       available: DataTypes.BOOLEAN,
+      condition: DataTypes.FLOAT,
+      startPrice: DataTypes.BIGINT,
+      currentBid: DataTypes.BIGINT,
+      currentUserBidName: DataTypes.STRING,
+      currentUserBidId: DataTypes.INTEGER,
     },
     {
       hooks: {
         beforeCreate: (Product) => {
           Product.sold = false;
           Product.available = true;
+          Product.startPrice = Product.price;
+          Product.currentBid = Product.price;
         },
       },
       sequelize,

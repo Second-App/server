@@ -26,13 +26,17 @@ class WishlistController {
         };
 
       const data = await Wishlist.create(newWishlist);
-
+      console.log(data);
+      /* istanbul ignore if */
       if (!data) throw err;
-
-      res.status(201).json({
-        msg: 'success add wishlist',
+      const createdWishlist = await Wishlist.findOne({
+        where: { ProductId, UserId },
+        include: ['Product', 'User'],
       });
+
+      res.status(201).json(createdWishlist);
     } catch (err) {
+      console.log(err, 38);
       next(err);
     }
   }
@@ -45,11 +49,12 @@ class WishlistController {
         where: { UserId },
         include: ['Product'],
       });
-
+      /* istanbul ignore if */
       if (!data) throw err;
 
       res.status(200).json(data);
     } catch (err) {
+      /* istanbul ignore next */
       next(err);
     }
   }
@@ -61,13 +66,14 @@ class WishlistController {
       const data = await Wishlist.destroy({
         where: { id },
       });
-
+      /* istanbul ignore if */
       if (!data) throw err;
 
       res.status(200).json({
-        msg: 'A wishlist has been deleted',
+        msg: 'Wishlist deleted',
       });
     } catch (err) {
+      /* istanbul ignore next */
       next(err);
     }
   }
