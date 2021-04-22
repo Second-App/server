@@ -1,8 +1,13 @@
-/* istanbul ignore file */
+/**
+ * /* istanbul ignore file
+ *
+ * @format
+ */
+
 const env = process.env.NODE_ENV;
 
 if (env !== 'production') {
-  require('dotenv').config();
+    require('dotenv').config();
 }
 
 const capsEnv = env.toUpperCase();
@@ -14,28 +19,30 @@ const host = process.env['DB_HOST_' + capsEnv];
 const dialect = process.env['DB_DIALECT_' + capsEnv];
 
 module.exports = {
-  development: {
-    username,
-    password,
-    database,
-    host,
-    dialect,
-  },
-  test: {
-    username,
-    password,
-    database,
-    host,
-    dialect,
-  },
-  production: {
-    use_env_variable: 'DATABASE_URL',
-    dialect: 'postgres',
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false,
-      },
+    development: {
+        username,
+        password,
+        database,
+        host,
+        dialect,
     },
-  },
+    test: {
+        username,
+        password,
+        database,
+        host,
+        dialect,
+    },
+    production: {
+        use_env_variable: 'DATABASE_URL',
+        ssl: true,
+        dialect: 'postgres',
+        protocol: 'postgres',
+        dialectOptions: {
+            ssl: {
+                require: true,
+                rejectUnauthorized: false,
+            },
+        },
+    },
 };
